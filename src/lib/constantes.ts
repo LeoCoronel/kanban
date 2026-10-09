@@ -1,0 +1,21 @@
+import type { Estado, Prioridad, Version } from './tipos'
+
+export const VERSIONES: Version[] = ['MVP', 'Release 2', 'Futuro', 'Fuera de alcance']
+export const PRIORIDADES: Prioridad[] = ['Alta', 'Media', 'Baja']
+export const PESO_PRIORIDAD: Record<Prioridad, number> = { Alta: 0, Media: 1, Baja: 2 }
+
+export const ESTADOS: Record<Estado, string> = {
+  backlog: 'Backlog',
+  por_hacer: 'Por hacer',
+  en_progreso: 'En progreso',
+  en_revision: 'En revisión',
+  hecho: 'Hecho',
+}
+
+/** Columnas del sprint activo, en orden. */
+export const ESTADOS_SPRINT: Exclude<Estado, 'backlog'>[] = [
+  'por_hacer',
+  'en_progreso',
+  'en_revision',
+  'hecho',
+]

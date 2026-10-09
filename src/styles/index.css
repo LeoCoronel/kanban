@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+@import './tokens.css';
+
+/* Anillo de foco del design system: 2 px accent-text con 2 px de separación */
+@utility foco {
+  &:focus-visible {
+    outline: 2px solid var(--color-accent-text);
+    outline-offset: 2px;
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--color-accent-subtle);
+  }
+  * {
+    scrollbar-color: var(--color-border-strong) transparent;
+  }
+}

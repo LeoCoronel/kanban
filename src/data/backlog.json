@@ -1,0 +1,553 @@
+[
+  {
+    "codigo": "US01",
+    "version": "MVP",
+    "historia": "Como administrador, quiero registrar nuevos usuarios asignándoles el rol correspondiente, para permitirles el acceso seguro y controlado al sistema.",
+    "descripcion": "Registro de usuarios en el sistema",
+    "valor": 5,
+    "esfuerzo": 3,
+    "prioridad": "Alta",
+    "criterios": [
+      "El administrador debe poder hacer click en un botón \"Agregar Usuario\". Debe visualizar un formulario con los campos: Nombre, Apellido, Correo electrónico y Contraseña temporal.",
+      "El sistema debe permitir seleccionar el rol del usuario mediante un menú desplegable.",
+      "La contraseña temporal debe cumplir validaciones mínimas (8 o más caracteres de longitud, al menos una mayúscula, una minúscula y un número)",
+      "Al guardar, el sistema debe enviar un correo de bienvenida.",
+      "Debe permitir el reenvío del correo de bienvenida.",
+      "Si el correo ya existe, mostrar error."
+    ],
+    "notas": "No se planea que un usuario pueda crear su propia cuenta",
+    "orden": 0
+  },
+  {
+    "codigo": "US02",
+    "version": "MVP",
+    "historia": "Como usuario del sistema, quiero iniciar sesión en el sistema con mis credenciales, para acceder a los paneles y herramientas de gestión.",
+    "descripcion": "Inicio de sesión en el sistema",
+    "valor": 5,
+    "esfuerzo": 3,
+    "prioridad": "Alta",
+    "criterios": [
+      "El sistema debe mostrar una pantalla de inicio de sesion con los campos Correo y Contraseña.",
+      "No debe mostrarse el input escrito en el campo Contraseña al menos que se seleccione la opción de \"Ver Contraseña\"",
+      "Al ingresar credenciales válidas, redirigir al Dashboard.",
+      "Ante credenciales inválidas, mostrar \"Usuario o contraseña incorrectos\".",
+      "El sistema debe redirigir a usuarios no autenticados a la pantalla de inicio de sesión.",
+      "La sesión debe expirar tras inactividad (ej. 1 hora)."
+    ],
+    "notas": "Inicio de sesión tradicional con correo y contraseña. Incluye manejo de sesiones",
+    "orden": 1
+  },
+  {
+    "codigo": "US03",
+    "version": "MVP",
+    "historia": "Como usuario del sistema, quiero restablecer mi contraseña olvidada, para recuperar el acceso a mi cuenta sin depender del administrador.",
+    "descripcion": "Cambio de contraseña",
+    "valor": 4,
+    "esfuerzo": 2,
+    "prioridad": "Media",
+    "criterios": [
+      "La pantalla de login debe incluir un enlace \"¿Olvidaste tu contraseña?\".",
+      "El usuario ingresa su correo para recibir un enlace temporal único, con vigencia de 2 horas.",
+      "Al hacer click en el enlace, mostrar formulario para confirmar nueva contraseña.",
+      "Si la contraseña nueva ingresada es igual a la anterior, mostrar \"La contraseña nueva no puede ser igual a la anterior\"",
+      "Luego de restablecer la contraseña, el token de acción debe inhabilitarse."
+    ],
+    "notas": "",
+    "orden": 2
+  },
+  {
+    "codigo": "US04",
+    "version": "MVP",
+    "historia": "Como usuario del sistema, quiero dar de alta un nuevo móvil de emergencia en el sistema, para iniciar su seguimiento de disponibilidad, mantenimiento e inventario.",
+    "descripcion": "Registro inicial de unidades de emergencia.",
+    "valor": 5,
+    "esfuerzo": 3,
+    "prioridad": "Alta",
+    "criterios": [
+      "Datos obligatorios: Número/Denominación, Patente, Tipo, Marca y Modelo.",
+      "Validar que no existan duplicados.",
+      "Estado inicial \"Operativo / Disponible\".",
+      "Los campos Tipo, Marca y Modelo deben ser listas seleccionables con opciones precargadas"
+    ],
+    "notas": "Base para la gestión de flota.",
+    "orden": 3
+  },
+  {
+    "codigo": "US05",
+    "version": "MVP",
+    "historia": "Como usuario del sistema, quiero visualizar un panel rápido con el estado de todos los móviles, para saber instantáneamente cuáles están operativos para cubrir una emergencia.",
+    "descripcion": "Dashboard en tiempo real con códigos de color de disponibilidad de la flota.",
+    "valor": 5,
+    "esfuerzo": 1,
+    "prioridad": "Alta",
+    "criterios": [
+      "Lista o tarjetas de flota.",
+      "Indicadores de color: Verde (Operativo), Amarillo (Observaciones), Rojo (Fuera de Servicio).",
+      "Filtrar por estado y tipo de vehículo."
+    ],
+    "notas": "Crítico para decisiones ante emergencias.",
+    "orden": 4
+  },
+  {
+    "codigo": "US06",
+    "version": "MVP",
+    "historia": "Como usuario del sistema, quiero buscar un móvil específico y acceder a su ficha técnica, para consultar el resultado de su última revisión técnica y el inventario actual asignado.",
+    "descripcion": "Consulta de fichas técnicas y estado de inventario por unidad.",
+    "valor": 5,
+    "esfuerzo": 2,
+    "prioridad": "Alta",
+    "criterios": [
+      "Barra de búsqueda por Número interno o Patente.",
+      "Mensaje \"Móvil no encontrado\" cuando la búsqueda no arroja resultados",
+      "Ficha con tres pestañas: Datos Generales, Inventario y Última Revisión."
+    ],
+    "notas": "",
+    "orden": 5
+  },
+  {
+    "codigo": "US07",
+    "version": "MVP",
+    "historia": "Como usuario del sistema, quiero registrar la revisión periódica (check- list) del estado general y los materiales de un móvil, para certificar que está en condiciones operativas o reportar novedades y faltantes.",
+    "descripcion": "Ejecución y registro de check-lists periódicos.",
+    "valor": 5,
+    "esfuerzo": 3,
+    "prioridad": "Alta",
+    "criterios": [
+      "Formulario estructurado.",
+      "Marcar estado de materiales.",
+      "Agregar comentarios",
+      "Si hay falla crítica, cambiar estado a \"Fuera de Servicio\"."
+    ],
+    "notas": "",
+    "orden": 6
+  },
+  {
+    "codigo": "US08",
+    "version": "MVP",
+    "historia": "Como personal administrativo, quiero registrar una solicitud completando un formulario estructurado con los datos del damnificado, para iniciar la gestión asegurando que no haya datos ausentes o erróneos.",
+    "descripcion": "Alta de solicitudes de constancias de actuación.",
+    "valor": 5,
+    "esfuerzo": 2,
+    "prioridad": "Alta",
+    "criterios": [
+      "El formulario incluye datos del damnificado y del siniestro.",
+      "Campos obligatorios marcados con asterisco.",
+      "Validar campos vacíos o formatos inválidos con alertas.",
+      "Estado inicial \"Pendiente\" de la solicitud."
+    ],
+    "notas": "Paso inicial del flujo administrativo.",
+    "orden": 7
+  },
+  {
+    "codigo": "US09",
+    "version": "MVP",
+    "historia": "Como personal administrativo, quiero consultar, buscar, ordenar y filtrar el listado general de solicitudes según diversos criterios (estado, DNI, nombre del damnificado, fecha), para ubicar rápidamente solicitudes específicas, identificar cuáles requieren acción inmediata y gestionar eficientemente el flujo de trabajo.",
+    "descripcion": "Panel de búsqueda y filtrado rápido de solicitudes.",
+    "valor": 4,
+    "esfuerzo": 2,
+    "prioridad": "Media",
+    "criterios": [
+      "El sistema debe desplegar un listado principal que incluya columnas clave: Nro de Solicitud, Fecha de Alta, Nombre y DNI del Damnificado, Tipo de Siniestro y Estado Actual.",
+      "Debe existir una barra de búsqueda para localizar solicitudes ingresando el DNI del damnificado, Nro de Solicitud o Nombre/Apellido de la persona damnificada",
+      "Debe permitir filtrar el listado según el estado del trámite.",
+      "La lista debe mostrar por defecto las solicitudes ordenadas de la más reciente a la más antigua.",
+      "Si la lista supera los 20 registros, el sistema debe implementar paginación clara para no ralentizar la pantalla."
+    ],
+    "notas": "",
+    "orden": 8
+  },
+  {
+    "codigo": "US10",
+    "version": "MVP",
+    "historia": "Como personal administrativo, quiero generar constancias de actuación pre completadas con los datos de la solicitud, para reducir el tiempo de confección manual.",
+    "descripcion": "",
+    "valor": 5,
+    "esfuerzo": 2,
+    "prioridad": "Alta",
+    "criterios": [
+      "Al seleccionar solicitud, botón \"Generar Constancia\".",
+      "Abrir plantilla con datos volcados automáticamente.",
+      "Permitir editar o agregar texto adicional antes de guardar."
+    ],
+    "notas": "Ahorro significativo de tiempo.",
+    "orden": 9
+  },
+  {
+    "codigo": "US11",
+    "version": "MVP",
+    "historia": "Como personal administrativo, quiero exportar las constancias generadas en formato PDF y poder imprimirlas, para facilitar su firma física, archivo y entrega al damnificado.",
+    "descripcion": "Exportación de documentos a PDF optimizados para formato A4 e impresión.",
+    "valor": 5,
+    "esfuerzo": 3,
+    "prioridad": "Alta",
+    "criterios": [
+      "Vista con botones \"Descargar PDF\" e \"Imprimir\".",
+      "PDF de lectura con formato oficial (membrete, tipografía, espacios para firmas).",
+      "Al imprimir, adaptar a tamaño A4."
+    ],
+    "notas": "Esencial para formato físico de constancias.",
+    "orden": 10
+  },
+  {
+    "codigo": "US12",
+    "version": "MVP",
+    "historia": "Como personal administrativo, quiero marcar una solicitud como \"Completada\" una vez que el damnificado recibe su constancia, para cerrar el ciclo del trámite y mantener el historial actualizado.",
+    "descripcion": "",
+    "valor": 4,
+    "esfuerzo": 1,
+    "prioridad": "Alta",
+    "criterios": [
+      "En constancias \"Firmada\", botón \"Marcar como Entregada\".",
+      "Solicitar confirmación y registrar fecha, hora y usuario.",
+      "Pasar al \"Historial de solicitudes\"."
+    ],
+    "notas": "Cierre definitivo del trámite administrativo",
+    "orden": 11
+  },
+  {
+    "codigo": "US13",
+    "version": "MVP",
+    "historia": "Como personal administrativo, quiero poder editar o cancelar una solicitud en estado pendiente, para corregir errores de tipeo o desestimar pedidos que no correspondan.",
+    "descripcion": "Modificación de solicitudes aún no completadas",
+    "valor": 4,
+    "esfuerzo": 2,
+    "prioridad": "Media",
+    "criterios": [
+      "Solicitudes en estado \"Nueva\" muestran botones \"Editar\" y \"Cancelar\". Editar reabre formulario. Cancelar pide confirmación y motivo. Deshabilitado si ya fue firmada."
+    ],
+    "notas": "",
+    "orden": 12
+  },
+  {
+    "codigo": "US14",
+    "version": "MVP",
+    "historia": "Como personal administrativo, quiero registrar si la persona damnificada abonó el arancel administrativo correspondiente a la constancia, para controlar si la entrega de la constancia es posible.",
+    "descripcion": "Registro del estado de pago del trámite.",
+    "valor": 5,
+    "esfuerzo": 1,
+    "prioridad": "Alta",
+    "criterios": [
+      "Campo en entrega para estado de pago (\"Abonado\", \"Exento\", \"Pendiente\").",
+      "Ingresar monto del pago y método de pago.",
+      "Impedir el cambio de estado a \"Entregada\" si el arancel figura como \"Pendiente\""
+    ],
+    "notas": "No se puede entregar una constancia a una persona que no realizó el pago por el trámite",
+    "orden": 13
+  },
+  {
+    "codigo": "US15",
+    "version": "Release 2",
+    "historia": "Como usuario del sistema, quiero escanear un QR ubicado en cada móvil para poder acceder de forma instantanea a su ficha y al formulario de revisión periódica (check-list).",
+    "descripcion": "QR con ficha de móvil",
+    "valor": 4,
+    "esfuerzo": 2,
+    "prioridad": "Media",
+    "criterios": [
+      "El escaneo debe abrir una vista web mobile-friendly.",
+      "Si el usuario no está autenticado, debe solicitar inicio de sesión antes de mostrar la ficha técnica."
+    ],
+    "notas": "",
+    "orden": 14
+  },
+  {
+    "codigo": "US16",
+    "version": "Release 2",
+    "historia": "Como usuario del sistema, quiero actualizar el kilometraje y las horas de uso de la bomba de agua de cada unidad, para llevar un control de desgaste y programar los servicios de mantenimiento preventivo.",
+    "descripcion": "",
+    "valor": 3,
+    "esfuerzo": 2,
+    "prioridad": "Media",
+    "criterios": [
+      "Función rápida de actualización.",
+      "Permitir valores decimales.",
+      "No permitir valores menores al último registrado.",
+      "Calcular si superó el límite de servicio para generar alerta visual."
+    ],
+    "notas": "",
+    "orden": 15
+  },
+  {
+    "codigo": "US17",
+    "version": "Release 2",
+    "historia": "Como usuario del sistema, quiero configurar la estructura de compartimentos (persianas, cajones, techo, cabina) de cada móvil, para mapear con precisión la ubicación física de los materiales en el vehículo.",
+    "descripcion": "Mapeo y estructuración de compartimentos físicos en cada unidad.",
+    "valor": 4,
+    "esfuerzo": 4,
+    "prioridad": "Media",
+    "criterios": [
+      "Opción \"Gestionar Compartimentos\" en la ficha del móvil.",
+      "Agregar, nombrar, editar y eliminar compartimentos.",
+      "Impedir eliminación si contiene materiales asignados."
+    ],
+    "notas": "",
+    "orden": 16
+  },
+  {
+    "codigo": "US18",
+    "version": "Release 2",
+    "historia": "Como encargado de automotores, quiero registrar el movimiento o traspaso de herramientas y materiales entre diferentes móviles o hacia el depósito, para mantener el inventario exacto cuando los equipos se prestan o reasignan.",
+    "descripcion": "",
+    "valor": 4,
+    "esfuerzo": 5,
+    "prioridad": "Media",
+    "criterios": [
+      "Seleccionar materiales en inventario y usar \"Transferir\".",
+      "Solicitar destino y motivo.",
+      "Descontar de origen y sumar a destino automáticamente con registro.",
+      "Validar que no se pueda transferir una cantidad mayor de materiales de la que actualmente existe en el movil de origen."
+    ],
+    "notas": "Requiere gestión compleja de inventario, así como un nuevo rol \"Encargado de automotores\"",
+    "orden": 17
+  },
+  {
+    "codigo": "US19",
+    "version": "Release 2",
+    "historia": "Como encargado de automotores, quiero gestionar el stock de repuestos mecánicos y consumibles (aceite, filtros, lámparas) en el taller del cuartel, para asegurar que los mantenimientos preventivos y reparaciones menores puedan realizarse sin demoras.",
+    "descripcion": "Control de stock e inventario de repuestos de taller.",
+    "valor": 4,
+    "esfuerzo": 4,
+    "prioridad": "Media",
+    "criterios": [
+      "Sección independiente \"Stock\".",
+      "Alta, modificación y baja de ítems.",
+      "Descontar repuestos al registrar reparaciones.",
+      "Alertas por stock mínimo."
+    ],
+    "notas": "Requiere gestión compleja de inventario, así como un nuevo rol \"Encargado de automotores\"",
+    "orden": 18
+  },
+  {
+    "codigo": "US20",
+    "version": "Release 2",
+    "historia": "Como administrador del sistema, quiero poder dar de baja definitivamente un móvil del sistema, para mantener el inventario de la flota actualizado cuando una unidad es vendida, donada o declarada pérdida total.",
+    "descripcion": "Baja institucional definitiva de unidades fuera de servicio permanente.",
+    "valor": 3,
+    "esfuerzo": 3,
+    "prioridad": "Baja",
+    "criterios": [
+      "Botón \"Dar de Baja\" exclusivo para Administrador o Jefatura.",
+      "Exigir motivo, documento adjunto y doble confirmación.",
+      "Impedir baja si tiene materiales asignados.",
+      "Guardar ficha del móvil como \"solo lectura\" en archivo histórico."
+    ],
+    "notas": "",
+    "orden": 19
+  },
+  {
+    "codigo": "US21",
+    "version": "Release 2",
+    "historia": "Como personal administrativo, quiero vincular la solicitud del damnificado con el parte de actuación/salida correspondiente del sistema, para extraer automáticamente los datos técnicos del siniestro y verificar que la intervención realmente existió.",
+    "descripcion": "Vinculación directa entre el pedido del damnificado y el parte operativo de salida.",
+    "valor": 4,
+    "esfuerzo": 4,
+    "prioridad": "Baja",
+    "criterios": [
+      "Botón o campo de búsqueda \"Vincular Parte de Salida\".",
+      "Buscar parte por filtros.",
+      "Autocompletar datos operativos (horarios, unidades, oficial).",
+      "Alerta si se intenta generar sin parte vinculado."
+    ],
+    "notas": "Requiere como paso previo tener partes de salida dentro del sistema",
+    "orden": 20
+  },
+  {
+    "codigo": "US22",
+    "version": "Release 2",
+    "historia": "Como persona damnificada, quiero consultar el estado de mi trámite a través de un portal web o enlace público, para saber si mi constancia está lista para ser retirada o descargada sin tener que llamar por teléfono al cuartel o ir a la estación.",
+    "descripcion": "Consulta pública web del estado de un trámite mediante DNI y/o número de solicitud.",
+    "valor": 3,
+    "esfuerzo": 3,
+    "prioridad": "Baja",
+    "criterios": [
+      "URL pública e independiente.",
+      "Ingresar DNI y \"Número de Solicitud/Trámite\".",
+      "Devolver solo el estado actual sin exponer datos sensibles."
+    ],
+    "notas": "Reduce llamadas telefónicas y mensajes. No es esencial para el flujo.",
+    "orden": 21
+  },
+  {
+    "codigo": "US23",
+    "version": "Release 2",
+    "historia": "Como administrador del sistema, quiero poder editar el texto base y la estructura de las plantillas de constancias, para mantener los documentos actualizados ante cambios normativos o legales.",
+    "descripcion": "",
+    "valor": 3,
+    "esfuerzo": 2,
+    "prioridad": "Baja",
+    "criterios": [
+      "Módulo de configuración de plantillas para editar texto fijo.",
+      "Permitir insertar etiquetas/variables dinámicas reemplazables automáticamente.",
+      "Botón de \"Vista Previa\"."
+    ],
+    "notas": "Las plantillas por lo general no cambian",
+    "orden": 22
+  },
+  {
+    "codigo": "US24",
+    "version": "Futuro",
+    "historia": "Como usuario del sistema, quiero registrar las reparaciones o mantenimientos mecánicos realizados en un móvil que estaba \"Fuera de Servicio\", para documentar el arreglo y devolverlo al estado operativo.",
+    "descripcion": "Registro de reparaciones mecánicas en el reingreso de unidades a servicio.",
+    "valor": 4,
+    "esfuerzo": 4,
+    "prioridad": "Media",
+    "criterios": [
+      "Botón \"Registrar Reparación / Alta\" en móvil fuera de servicio.",
+      "Formulario de trabajo realizado, repuestos y taller.",
+      "Permitir cambiar estado a \"Operativo\".",
+      "Guardar en historial.",
+      "Descontar automáticamente del inventario de taller los repuestos utilizados",
+      "Permitir adjuntar comprobantes o facturas si el arreglo se realizó en un taller externo."
+    ],
+    "notas": "",
+    "orden": 23
+  },
+  {
+    "codigo": "US25",
+    "version": "Futuro",
+    "historia": "Como usuario del sistema, quiero visualizar alertas sobre vencimientos de seguros, VTV y mantenimientos programados de cada móvil, para evitar que las unidades salgan a la calle en infracción o sufran daños.",
+    "descripcion": "Sistema de alertas tempranas de vencimientos legales y seguros.",
+    "valor": 3,
+    "esfuerzo": 5,
+    "prioridad": "Alta",
+    "criterios": [
+      "Configurar fechas de VTV, seguro y GNC.",
+      "Sección \"Alertas Próximas\" en Dashboard para los próximos 30 días.",
+      "Marcado automático en rojo y sugerir pase a \"Fuera de Servicio\" si está vencido."
+    ],
+    "notas": "Mitiga de riesgos legales.",
+    "orden": 24
+  },
+  {
+    "codigo": "US26",
+    "version": "Futuro",
+    "historia": "Como usuario del sistema, quiero registrar cada carga de combustible que se le realiza a los móviles, para auditar el consumo mensual y los gastos operativos de la flota.",
+    "descripcion": "Auditoría de cargas de combustible, costos y kilometraje.",
+    "valor": 3,
+    "esfuerzo": 2,
+    "prioridad": "Media",
+    "criterios": [
+      "Formulario con datos de carga.",
+      "Obligar al ingreso del kilometraje actual al cargar combustible",
+      "validar que sea igual o superior al último registrado.",
+      "Autocalcular el consumo en Km/Litro."
+    ],
+    "notas": "",
+    "orden": 25
+  },
+  {
+    "codigo": "US27",
+    "version": "Futuro",
+    "historia": "Como jefe de cuartel, quiero consultar un historial unificado (hoja de vida) de cada móvil, para auditar toda la actividad del vehículo a lo largo del tiempo.",
+    "descripcion": "Bitácora histórica unificada por unidad vehicular.",
+    "valor": 4,
+    "esfuerzo": 5,
+    "prioridad": "Media",
+    "criterios": [
+      "Pestaña \"Historial\" o en ficha del móvil.",
+      "Línea de tiempo con eventos.",
+      "Filtros por fecha y tipo.",
+      "Los registros son inmutables",
+      "Incluye un botón \"Descargar PDF\""
+    ],
+    "notas": "",
+    "orden": 26
+  },
+  {
+    "codigo": "US28",
+    "version": "Futuro",
+    "historia": "Como jefe de cuartel, quiero generar reportes exportables sobre el estado general de la flota, costos operativos e intervenciones por móvil en un período de tiempo, para la toma de decisiones financieras y operativas.",
+    "descripcion": "Reportes ejecutivos globales de la flota y costos operativos.",
+    "valor": 4,
+    "esfuerzo": 5,
+    "prioridad": "Media",
+    "criterios": [
+      "Sección \"Reportes de Automotores\".",
+      "Selectores de rango de fechas y métricas.",
+      "Gráficos básicos y exportación a PDF/Excel."
+    ],
+    "notas": "",
+    "orden": 27
+  },
+  {
+    "codigo": "US29",
+    "version": "Futuro",
+    "historia": "Como administrador del sistema, quiero que las constancias y solicitudes con más de cierta cantidad de años (ej. 5 años) pasen a un estado de \"Archivo Muerto\", para no sobrecargar la base de datos operativa y cumplir con los plazos legales de retención de información.",
+    "descripcion": "Política de archivo histórico a largo plazo para optimizar la base de datos.",
+    "valor": 3,
+    "esfuerzo": 3,
+    "prioridad": "Baja",
+    "criterios": [
+      "Ocultar automáticamente de búsquedas cotidianas las solicitudes que superen la antigüedad.",
+      "Sección \"Archivo Histórico\" para recuperación exclusiva por administrador."
+    ],
+    "notas": "",
+    "orden": 28
+  },
+  {
+    "codigo": "US30",
+    "version": "Fuera de alcance",
+    "historia": "Como jefe de cuartel, quiero aplicar mi firma electrónica/digital a las constancias generadas, para otorgarles validez oficial sin necesidad de imprimir el documento.",
+    "descripcion": "Firma Digital",
+    "valor": 2,
+    "esfuerzo": 5,
+    "prioridad": "Baja",
+    "criterios": [
+      "Solo rol \"jefe de cuartel\" ve el botón \"Firmar Documento\".",
+      "Solicitar PIN o contraseña como doble factor.",
+      "Bloquear para edición y estampar firma/QR en el PDF.",
+      "Estado cambia a \"Firmada / Lista para entrega\"."
+    ],
+    "notas": "Aporta poco valor al negocio en su estado actual. Requiere nueva persona \"Jefe de Cuartel\"",
+    "orden": 29
+  },
+  {
+    "codigo": "US31",
+    "version": "Fuera de alcance",
+    "historia": "Como jefe de cuartel, quiero poder rechazar la firma de una constancia dejando un comentario, para que el administrativo sepa qué debe corregir antes de volver a solicitar mi firma.",
+    "descripcion": "Rechazo de autorización con observaciones obligatorias para corrección.",
+    "valor": 2,
+    "esfuerzo": 2,
+    "prioridad": "Baja",
+    "criterios": [
+      "En previsualización, botón \"Rechazar / Solicitar corrección\".",
+      "Cuadro de texto obligatorio para motivo.",
+      "Estado cambia a \"Rechazada/Para corregir\".",
+      "Administrativo visualiza el comentario."
+    ],
+    "notas": "Carece de sentido si el sistema no tiene firmas digitales",
+    "orden": 30
+  },
+  {
+    "codigo": "US32",
+    "version": "Fuera de alcance",
+    "historia": "Como personal administrativo, quiero poder enviar la constancia firmada por correo electrónico directamente desde el sistema, para agilizar la entrega al damnificado y evitarle un viaje innecesario al cuartel.",
+    "descripcion": "Envío automatizado del documento digital firmado al ciudadano.",
+    "valor": 2,
+    "esfuerzo": 3,
+    "prioridad": "Baja",
+    "criterios": [
+      "Con estado \"Firmada\", habilitar \"Enviar formato digital\".",
+      "Modal confirmando correo/teléfono.",
+      "Enviar mensaje con enlace seguro.",
+      "Marcar como \"Entregada/Completada\" al confirmar."
+    ],
+    "notas": "Carece de sentido si el sistema no tiene firmas digitales",
+    "orden": 31
+  },
+  {
+    "codigo": "US33",
+    "version": "Fuera de alcance",
+    "historia": "Como personal administrativo, quiero recibir una alerta en el sistema cuando la jefatura firme o rechace una constancia, para proceder inmediatamente con la entrega o corrección sin tener que revisar la bandeja manualmente.",
+    "descripcion": "Sistema de notificaciones en tiempo real para el personal administrativo.",
+    "valor": 3,
+    "esfuerzo": 5,
+    "prioridad": "Baja",
+    "criterios": [
+      "Icono de campana en barra superior.",
+      "Indicador visual al cambiar a \"Firmada\" o \"Rechazada\".",
+      "Redirección directa al hacer clic."
+    ],
+    "notas": "Carece de sentido si el sistema no tiene firmas digitales",
+    "orden": 32
+  }
+]
