@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { DatosContexto, type Datos, type Destino } from './datosContext'
 import { repo } from './repo'
-import type { Historia, Sprint } from './tipos'
+import type { Epica, Historia, Sprint } from './tipos'
 
 const mensaje = (e: unknown) => (e instanceof Error ? e.message : 'Ocurrió un error inesperado.')
 
 export function DatosProvider({ children }: { children: ReactNode }) {
   const [historias, setHistorias] = useState<Historia[]>([])
   const [sprints, setSprints] = useState<Sprint[]>([])
+  const [epicas, setEpicas] = useState<Epica[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -16,6 +17,7 @@ export function DatosProvider({ children }: { children: ReactNode }) {
       const d = await repo.listar()
       setHistorias(d.historias)
       setSprints(d.sprints)
+      setEpicas(d.epicas)
     } catch (e) {
       setError(mensaje(e))
     } finally {
@@ -30,6 +32,7 @@ export function DatosProvider({ children }: { children: ReactNode }) {
       .then((d) => {
         setHistorias(d.historias)
         setSprints(d.sprints)
+        setEpicas(d.epicas)
       })
       .catch((e: unknown) => setError(mensaje(e)))
       .finally(() => setCargando(false))
@@ -56,11 +59,13 @@ export function DatosProvider({ children }: { children: ReactNode }) {
       modo: repo.modo,
       historias,
       sprints,
+      epicas,
       sprintActivo: sprints.find((s) => s.estado === 'activo'),
       cargando,
       error,
       limpiarError: () => setError(null),
-      crearHistoria: (h) => ejecutar(() => repo.crearHistoria(h)),
+      crearHistoria: (h) => ejecutar(() => repo.crearHistorias([h])),
+      crearHistorias: (hs) => ejecutar(() => repo.crearHistorias(hs)),
       actualizarHistoria: (id, patch) => ejecutar(() => repo.actualizarHistorias([id], patch)),
       moverHistoria: async (id: string, destino: Destino) => {
         // Actualización optimista: la tarjeta se mueve ya, y se revierte sola si falla.
@@ -95,9 +100,12 @@ export function DatosProvider({ children }: { children: ReactNode }) {
             cerrado_en: new Date().toISOString(),
           })
         }),
+      crearEpica: (e) => ejecutar(() => repo.crearEpica(e)),
+      actualizarEpica: (id, patch) => ejecutar(() => repo.actualizarEpica(id, patch)),
+      eliminarEpica: (id) => ejecutar(() => repo.eliminarEpica(id)),
       importarSemilla: () => ejecutar(() => repo.importarSemilla()),
     }),
-    [historias, sprints, cargando, error, ejecutar],
+    [historias, sprints, epicas, cargando, error, ejecutar],
   )
 
   return <DatosContexto.Provider value={valor}>{children}</DatosContexto.Provider>

@@ -24,10 +24,10 @@ export function Insignia({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-medium whitespace-nowrap ${TONOS[tono]}`}
+      className={`inline-flex max-w-full items-center gap-1 rounded-md border px-1.5 py-0.5 text-xs font-medium whitespace-nowrap ${TONOS[tono]}`}
     >
-      <Icono size={12} strokeWidth={1.5} aria-hidden />
-      {children}
+      <Icono size={12} strokeWidth={1.5} aria-hidden className="shrink-0" />
+      <span className="truncate">{children}</span>
     </span>
   )
 }

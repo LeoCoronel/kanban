@@ -1,5 +1,13 @@
 import { createContext } from 'react'
-import type { Estado, Historia, NuevaHistoria, NuevoSprint, Sprint } from './tipos'
+import type {
+  Epica,
+  Estado,
+  Historia,
+  NuevaEpica,
+  NuevaHistoria,
+  NuevoSprint,
+  Sprint,
+} from './tipos'
 
 export interface Destino {
   sprint_id: string | null
@@ -10,11 +18,13 @@ export interface Datos {
   modo: 'supabase' | 'local'
   historias: Historia[]
   sprints: Sprint[]
+  epicas: Epica[]
   sprintActivo: Sprint | undefined
   cargando: boolean
   error: string | null
   limpiarError: () => void
   crearHistoria: (h: NuevaHistoria) => Promise<boolean>
+  crearHistorias: (hs: NuevaHistoria[]) => Promise<boolean>
   actualizarHistoria: (id: string, patch: Partial<NuevaHistoria>) => Promise<boolean>
   moverHistoria: (id: string, destino: Destino) => Promise<void>
   eliminarHistoria: (id: string) => Promise<boolean>
@@ -23,6 +33,9 @@ export interface Datos {
   iniciarSprint: (id: string) => Promise<boolean>
   /** Cierra el sprint; las tarjetas sin terminar vuelven al backlog o pasan al sprint indicado. */
   cerrarSprint: (id: string, destinoPendientes: 'backlog' | string) => Promise<boolean>
+  crearEpica: (e: NuevaEpica) => Promise<boolean>
+  actualizarEpica: (id: string, patch: Partial<NuevaEpica>) => Promise<boolean>
+  eliminarEpica: (id: string) => Promise<boolean>
   importarSemilla: () => Promise<boolean>
 }
 

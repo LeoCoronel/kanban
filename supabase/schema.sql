@@ -20,6 +20,18 @@ create table if not exists public.sprints (
 create unique index if not exists sprints_un_solo_activo
   on public.sprints ((estado)) where estado = 'activo';
 
+-- ───────────── Épicas ─────────────
+-- Agrupan tarjetas de un mismo tema. Una épica transversal se trabaja en todos los sprints.
+create table if not exists public.epicas (
+  id           uuid primary key default gen_random_uuid(),
+  nombre       text not null unique,
+  descripcion  text not null default '',
+  tono         text not null default 'acento'
+               check (tono in ('acento', 'ok', 'warn', 'info', 'neutro')),
+  transversal  boolean not null default false,
+  created_at   timestamptz not null default now()
+);
+
 -- ───────────── Historias / tarjetas ─────────────
 create table if not exists public.historias (
   id            uuid primary key default gen_random_uuid(),
@@ -37,6 +49,7 @@ create table if not exists public.historias (
   estado        text not null default 'backlog'
                 check (estado in ('backlog', 'por_hacer', 'en_progreso', 'en_revision', 'hecho')),
   sprint_id     uuid references public.sprints (id) on delete set null,
+  epica_id      uuid references public.epicas (id) on delete set null,
   responsable   text not null default '',
   orden         integer not null default 0,
   created_at    timestamptz not null default now(),
@@ -44,6 +57,7 @@ create table if not exists public.historias (
 );
 
 create index if not exists historias_sprint_idx on public.historias (sprint_id);
+create index if not exists historias_epica_idx on public.historias (epica_id);
 
 create or replace function public.tocar_updated_at() returns trigger
 language plpgsql as $$
@@ -62,6 +76,7 @@ create trigger historias_updated_at before update on public.historias
 -- activar Vercel Password Protection o sumar Supabase Auth y cambiar estas políticas.
 alter table public.sprints   enable row level security;
 alter table public.historias enable row level security;
+alter table public.epicas    enable row level security;
 
 drop policy if exists "acceso_equipo_sprints" on public.sprints;
 create policy "acceso_equipo_sprints" on public.sprints
@@ -71,6 +86,26 @@ drop policy if exists "acceso_equipo_historias" on public.historias;
 create policy "acceso_equipo_historias" on public.historias
   for all to anon using (true) with check (true);
 
+drop policy if exists "acceso_equipo_epicas" on public.epicas;
+create policy "acceso_equipo_epicas" on public.epicas
+  for all to anon using (true) with check (true);
+
 -- ───────────── Tiempo real ─────────────
-alter publication supabase_realtime add table public.sprints;
-alter publication supabase_realtime add table public.historias;
+-- Cada tabla se publica solo si todavía no lo está (el script se puede correr más de una vez).
+do $$
+declare t text;
+begin
+  foreach t in array array['sprints', 'historias', 'epicas'] loop
+    if not exists (
+      select 1 from pg_publication_tables
+      where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = t
+    ) then
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    end if;
+  end loop;
+end $$;
+
+-- ───────────── Datos iniciales ─────────────
+insert into public.epicas (nombre, descripcion, tono, transversal)
+values ('Documentación', 'Documentación del proyecto. Se trabaja en cada sprint.', 'info', true)
+on conflict (nombre) do nothing;

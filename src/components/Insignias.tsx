@@ -4,12 +4,13 @@ import {
   ChevronDown,
   ChevronsUp,
   Clock,
+  Layers,
   Lock,
   Minus,
   Rocket,
   Target,
 } from 'lucide-react'
-import type { EstadoSprint, Prioridad, Version } from '@/lib/tipos'
+import type { Epica, EstadoSprint, Prioridad, Version } from '@/lib/tipos'
 import { Insignia } from './ui/Insignia'
 
 export function InsigniaPrioridad({ prioridad }: { prioridad: Prioridad }) {
@@ -74,6 +75,14 @@ export function InsigniaSprint({ estado }: { estado: EstadoSprint }) {
   return (
     <Insignia tono="info" icono={Clock}>
       Planificado
+    </Insignia>
+  )
+}
+
+export function InsigniaEpica({ epica }: { epica: Pick<Epica, 'nombre' | 'tono'> }) {
+  return (
+    <Insignia tono={epica.tono} icono={Layers}>
+      {epica.nombre}
     </Insignia>
   )
 }

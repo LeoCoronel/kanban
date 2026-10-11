@@ -1,4 +1,4 @@
-import type { Estado, Prioridad, Version } from './tipos'
+import type { Estado, Prioridad, TonoEpica, Version } from './tipos'
 
 export const VERSIONES: Version[] = ['MVP', 'Release 2', 'Futuro', 'Fuera de alcance']
 export const PRIORIDADES: Prioridad[] = ['Alta', 'Media', 'Baja']
@@ -18,4 +18,12 @@ export const ESTADOS_SPRINT: Exclude<Estado, 'backlog'>[] = [
   'en_progreso',
   'en_revision',
   'hecho',
+]
+
+export const TONOS_EPICA: { valor: TonoEpica; nombre: string }[] = [
+  { valor: 'acento', nombre: 'Rojo' },
+  { valor: 'info', nombre: 'Azul' },
+  { valor: 'ok', nombre: 'Verde' },
+  { valor: 'warn', nombre: 'Amarillo' },
+  { valor: 'neutro', nombre: 'Gris' },
 ]

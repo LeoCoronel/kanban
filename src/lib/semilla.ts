@@ -1,5 +1,5 @@
 import backlog from '../data/backlog.json'
-import type { NuevaHistoria, NuevoSprint, Prioridad, Version } from './tipos'
+import type { NuevaEpica, NuevaHistoria, NuevoSprint, Prioridad, Version } from './tipos'
 
 interface FilaBacklog {
   codigo: string
@@ -43,13 +43,23 @@ const TAREAS_SPRINT_0: { codigo: string; descripcion: string; historia: string }
   },
 ]
 
+/** Épica transversal: se trabaja en todos los sprints. */
+export function epicaDocumentacion(): NuevaEpica {
+  return {
+    nombre: 'Documentación',
+    descripcion: 'Documentación del proyecto. Se trabaja en cada sprint.',
+    tono: 'info',
+    transversal: true,
+  }
+}
+
 export function sprint0(): NuevoSprint {
   return {
     nombre: 'Sprint 0',
     objetivo: 'Definir diseño, flujos y modelo de datos antes de empezar a desarrollar.',
     fecha_inicio: null,
     fecha_fin: null,
-    estado: 'cerrado',
+    estado: 'activo',
   }
 }
 
@@ -66,6 +76,7 @@ export function tareasSprint0(): Omit<NuevaHistoria, 'sprint_id'>[] {
     criterios: [],
     notas: '',
     estado: 'hecho',
+    epica_id: null,
     responsable: '',
     orden: i,
   }))
@@ -85,6 +96,7 @@ export function historiasIniciales(): NuevaHistoria[] {
     notas: f.notas,
     estado: 'backlog',
     sprint_id: null,
+    epica_id: null,
     responsable: '',
     orden: 100 + f.orden,
   }))

@@ -4,7 +4,7 @@ import { BarraFiltros } from '@/components/BarraFiltros'
 import { Encabezado } from '@/components/Encabezado'
 import { Cargando, Vacio } from '@/components/Estados'
 import { HistoriaModal } from '@/components/HistoriaModal'
-import { InsigniaPrioridad, InsigniaVersion } from '@/components/Insignias'
+import { InsigniaEpica, InsigniaPrioridad, InsigniaVersion } from '@/components/Insignias'
 import { Boton } from '@/components/ui/Boton'
 import { ESTADOS, PESO_PRIORIDAD, VERSIONES } from '@/lib/constantes'
 import type { Historia } from '@/lib/tipos'
@@ -20,6 +20,7 @@ const COLUMNAS: { clave: Clave | null; etiqueta: string; alinear?: 'r' }[] = [
   { clave: 'prioridad', etiqueta: 'Prioridad' },
   { clave: 'valor', etiqueta: 'Valor', alinear: 'r' },
   { clave: 'esfuerzo', etiqueta: 'Esf.', alinear: 'r' },
+  { clave: null, etiqueta: 'Épica' },
   { clave: null, etiqueta: 'Sprint' },
   { clave: null, etiqueta: 'Estado' },
   { clave: null, etiqueta: 'Responsable' },
@@ -40,7 +41,7 @@ function comparar(a: Historia, b: Historia, clave: Clave): number {
 }
 
 export function Backlog() {
-  const { historias, sprints, cargando } = useDatos()
+  const { historias, sprints, epicas, cargando } = useDatos()
   const [filtros, setFiltros] = useState(FILTROS_VACIOS)
   const [orden, setOrden] = useState<{ clave: Clave; asc: boolean }>({ clave: 'codigo', asc: true })
   const [abierta, setAbierta] = useState<string | 'nueva' | null>(null)
@@ -55,6 +56,7 @@ export function Backlog() {
   }, [historias, filtros, orden])
 
   if (cargando) return <Cargando />
+  const epicaDe = (id: string | null) => epicas.find((e) => e.id === id)
   const nombreSprint = (id: string | null) => sprints.find((s) => s.id === id)?.nombre ?? '—'
   const editando = historias.find((h) => h.id === abierta)
 
@@ -84,7 +86,7 @@ export function Backlog() {
         </Vacio>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-border-strong bg-bg-surface">
-          <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
+          <table className="w-full min-w-[68rem] border-collapse text-left text-sm">
             <thead>
               <tr className="border-b border-border-strong">
                 {COLUMNAS.map((c) => {
@@ -140,6 +142,9 @@ export function Backlog() {
                   </td>
                   <td className="text-code px-3 text-right tabular-nums">{h.valor ?? '—'}</td>
                   <td className="text-code px-3 text-right tabular-nums">{h.esfuerzo ?? '—'}</td>
+                  <td className="px-3">
+                    {epicaDe(h.epica_id) ? <InsigniaEpica epica={epicaDe(h.epica_id)!} /> : '—'}
+                  </td>
                   <td className="px-3 text-text-secondary">{nombreSprint(h.sprint_id)}</td>
                   <td className="px-3 text-text-secondary">{ESTADOS[h.estado]}</td>
                   <td className="px-3 text-text-secondary">{h.responsable || '—'}</td>

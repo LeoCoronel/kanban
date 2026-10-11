@@ -1,11 +1,13 @@
-import { KanbanSquare, ListChecks, Repeat } from 'lucide-react'
+import { CalendarRange, KanbanSquare, Layers, ListChecks, Repeat } from 'lucide-react'
 
-export type Ruta = 'tablero' | 'backlog' | 'sprints'
+export type Ruta = 'tablero' | 'backlog' | 'planificacion' | 'sprints' | 'epicas'
 
 const ITEMS: { ruta: Ruta; etiqueta: string; icono: typeof KanbanSquare }[] = [
   { ruta: 'tablero', etiqueta: 'Tablero', icono: KanbanSquare },
   { ruta: 'backlog', etiqueta: 'Backlog', icono: ListChecks },
+  { ruta: 'planificacion', etiqueta: 'Plan', icono: CalendarRange },
   { ruta: 'sprints', etiqueta: 'Sprints', icono: Repeat },
+  { ruta: 'epicas', etiqueta: 'Épicas', icono: Layers },
 ]
 
 /** Barra inferior en mobile, riel lateral desde tablet. */

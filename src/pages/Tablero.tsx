@@ -4,21 +4,21 @@ import {
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
-  useDroppable,
   useSensor,
   useSensors,
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core'
 import { Lock, Plus, Flag } from 'lucide-react'
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState } from 'react'
 import { BarraFiltros } from '@/components/BarraFiltros'
 import { CerrarSprintModal } from '@/components/CerrarSprintModal'
 import { Encabezado } from '@/components/Encabezado'
 import { Cargando, Vacio } from '@/components/Estados'
 import { HistoriaModal } from '@/components/HistoriaModal'
 import { InsigniaSprint } from '@/components/Insignias'
-import { TarjetaArrastrable, TarjetaVista } from '@/components/Tarjeta'
+import { Columna } from '@/components/Columna'
+import { TarjetaVista } from '@/components/Tarjeta'
 import { Boton } from '@/components/ui/Boton'
 import { ESTADOS, ESTADOS_SPRINT } from '@/lib/constantes'
 import type { Destino } from '@/lib/datosContext'
@@ -32,71 +32,6 @@ import {
   rangoFechas,
   sumaEsfuerzo,
 } from '@/lib/util'
-
-interface ColumnaProps {
-  id: string
-  titulo: string
-  subtitulo?: string
-  extra?: ReactNode
-  historias: Historia[]
-  soltable: boolean
-  arrastrable: boolean
-  mostrarEstado?: boolean
-  vacio: string
-  onAbrir: (id: string) => void
-}
-
-function Columna({
-  id,
-  titulo,
-  subtitulo,
-  extra,
-  historias,
-  soltable,
-  arrastrable,
-  mostrarEstado,
-  vacio,
-  onAbrir,
-}: ColumnaProps) {
-  const { setNodeRef, isOver } = useDroppable({ id, disabled: !soltable })
-  return (
-    <section
-      ref={setNodeRef}
-      aria-label={titulo}
-      className={`flex h-full w-72 shrink-0 flex-col rounded-xl border bg-bg-base ${
-        isOver && soltable ? 'border-2 border-accent-text' : 'border-border-strong'
-      }`}
-    >
-      <header className="flex flex-col gap-1 border-b border-border-subtle p-3">
-        <div className="flex items-center justify-between gap-2">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-text-primary">
-            {titulo}
-            <span className="text-code rounded-md bg-bg-raised px-1.5 text-xs text-text-secondary tabular-nums">
-              {historias.length}
-            </span>
-          </h2>
-          {extra}
-        </div>
-        {subtitulo && <p className="text-xs text-text-muted">{subtitulo}</p>}
-      </header>
-      <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-2">
-        {historias.length === 0 ? (
-          <p className="p-3 text-center text-xs text-text-muted">{vacio}</p>
-        ) : (
-          historias.map((h) => (
-            <TarjetaArrastrable
-              key={h.id}
-              historia={h}
-              arrastrable={arrastrable}
-              mostrarEstado={mostrarEstado}
-              onAbrir={() => onAbrir(h.id)}
-            />
-          ))
-        )}
-      </div>
-    </section>
-  )
-}
 
 export function Tablero() {
   const { historias, sprints, sprintActivo, cargando, moverHistoria, importarSemilla } = useDatos()

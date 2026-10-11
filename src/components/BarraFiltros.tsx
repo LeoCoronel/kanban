@@ -1,6 +1,7 @@
 import { Search, X } from 'lucide-react'
 import { PRIORIDADES, VERSIONES } from '@/lib/constantes'
-import { FILTROS_VACIOS, type Filtros } from '@/lib/util'
+import { useDatos } from '@/lib/useDatos'
+import { FILTROS_VACIOS, SIN_EPICA, type Filtros } from '@/lib/util'
 import { Boton } from './ui/Boton'
 import { Entrada, Selector } from './ui/Campo'
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function BarraFiltros({ filtros, onCambiar, responsables }: Props) {
+  const { epicas } = useDatos()
   const hay = Object.values(filtros).some(Boolean)
   const set = (k: keyof Filtros, v: string) => onCambiar({ ...filtros, [k]: v })
   return (
@@ -53,6 +55,22 @@ export function BarraFiltros({ filtros, onCambiar, responsables }: Props) {
           <option key={p}>{p}</option>
         ))}
       </Selector>
+      {epicas.length > 0 && (
+        <Selector
+          aria-label="Filtrar por épica"
+          value={filtros.epica}
+          onChange={(e) => set('epica', e.target.value)}
+          className="w-auto"
+        >
+          <option value="">Todas las épicas</option>
+          {epicas.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.nombre}
+            </option>
+          ))}
+          <option value={SIN_EPICA}>Sin épica</option>
+        </Selector>
+      )}
       {responsables.length > 0 && (
         <Selector
           aria-label="Filtrar por responsable"

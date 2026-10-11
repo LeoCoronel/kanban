@@ -4,6 +4,8 @@ App del equipo para gestionar las historias de usuario de **centralBV**: tablero
 
 - **Tablero:** columna _Backlog_ + columnas del sprint activo (_Por hacer, En progreso, En revisión, Hecho_). Las tarjetas se arrastran entre columnas.
 - **Cierre de sprint:** al cerrar un sprint se crea una columna propia (como _Sprint 0_) con todas sus tarjetas, de solo lectura. Las tarjetas sin terminar vuelven al backlog o pasan a otro sprint planificado.
+- **Planificación:** columna _Sin asignar_ + una columna por sprint (activo y planificados). Se arrastran tarjetas para decidir de antemano qué se trabaja en cada sprint; cada columna suma el esfuerzo.
+- **Épicas:** agrupan tarjetas de un tema. Las _transversales_ (ej.: Documentación) se trabajan en todos los sprints y pueden generar una tarjeta por sprint de un solo paso. Cada tarjeta muestra su sprint y su épica.
 - **Backlog:** tabla con filtros (versión, prioridad, responsable, texto) y orden por columna.
 - **Sprints:** crear, editar, iniciar y cerrar; avance por sprint y listado de tarjetas.
 - **Tiempo real:** los cambios de una persona se ven en las demás sin recargar (Supabase Realtime).
@@ -28,6 +30,14 @@ Sin variables de entorno la app corre en **modo demo**: guarda todo en el navega
 5. `npm run dev`. En el tablero vacío, tocar **Cargar backlog inicial** (33 historias + Sprint 0).
 
 > La app no tiene login: quien tenga la URL y la anon key puede leer y escribir. Para cerrarla, activar _Password Protection_ en Vercel o sumar Supabase Auth y ajustar las políticas RLS de `schema.sql`.
+
+### Actualizar una base que ya tenías
+
+Si tu proyecto de Supabase ya tenía las tablas de una versión anterior, ejecutá una vez [`supabase/migracion-epicas.sql`](supabase/migracion-epicas.sql) (agrega épicas sin tocar las tarjetas). Para proyectos nuevos alcanza con `schema.sql`.
+
+### Plan de la Release 1
+
+[`supabase/plan-release-1.sql`](supabase/plan-release-1.sql) crea los Sprints 1 a 4 con las fechas y objetivos del Mapa de Releases, tres épicas temáticas y asigna las historias US01–US14 a su épica y sprint. Se ejecuta una vez, después de `migracion-epicas.sql`.
 
 ### Desplegar en Vercel (vía GitHub)
 

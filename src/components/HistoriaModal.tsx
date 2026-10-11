@@ -18,7 +18,8 @@ interface Props {
 const ESCALA = ['1', '2', '3', '4', '5']
 
 export function HistoriaModal({ historia, onCerrar }: Props) {
-  const { historias, sprints, crearHistoria, actualizarHistoria, eliminarHistoria } = useDatos()
+  const { historias, sprints, epicas, crearHistoria, actualizarHistoria, eliminarHistoria } =
+    useDatos()
   const editando = Boolean(historia)
 
   const [codigo, setCodigo] = useState(historia?.codigo ?? siguienteCodigo(historias))
@@ -33,6 +34,7 @@ export function HistoriaModal({ historia, onCerrar }: Props) {
   const [prioridad, setPrioridad] = useState<Prioridad>(historia?.prioridad ?? 'Media')
   const [responsable, setResponsable] = useState(historia?.responsable ?? '')
   const [sprintId, setSprintId] = useState(historia?.sprint_id ?? '')
+  const [epicaId, setEpicaId] = useState(historia?.epica_id ?? '')
   const [estado, setEstado] = useState<Estado>(
     historia?.estado && historia.estado !== 'backlog' ? historia.estado : 'por_hacer',
   )
@@ -69,6 +71,7 @@ export function HistoriaModal({ historia, onCerrar }: Props) {
       esfuerzo: esHistoria ? Number(esfuerzo) : null,
       prioridad,
       responsable: responsable.trim(),
+      epica_id: epicaId || null,
     }
     if (!bloqueada) {
       datos.sprint_id = sprintId || null
@@ -187,6 +190,21 @@ export function HistoriaModal({ historia, onCerrar }: Props) {
         </Campo>
         <Campo etiqueta="Notas" className="md:col-span-2">
           <AreaTexto value={notas} onChange={(e) => setNotas(e.target.value)} rows={2} />
+        </Campo>
+
+        <Campo
+          etiqueta="Épica"
+          ayuda="Agrupa tarjetas de un mismo tema, aunque estén en distintos sprints."
+        >
+          <Selector value={epicaId} onChange={(e) => setEpicaId(e.target.value)}>
+            <option value="">Sin épica</option>
+            {epicas.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.nombre}
+                {e.transversal ? ' (transversal)' : ''}
+              </option>
+            ))}
+          </Selector>
         </Campo>
 
         <Campo etiqueta="Responsable">

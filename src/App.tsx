@@ -5,12 +5,16 @@ import { Nav, type Ruta } from './components/Nav'
 import { DatosProvider } from './lib/DatosProvider'
 import { useDatos } from './lib/useDatos'
 import { Backlog } from './pages/Backlog'
+import { Epicas } from './pages/Epicas'
+import { Planificacion } from './pages/Planificacion'
 import { Sprints } from './pages/Sprints'
 import { Tablero } from './pages/Tablero'
 
 function rutaActual(): Ruta {
   const r = window.location.hash.replace(/^#\/?/, '')
-  return r === 'backlog' || r === 'sprints' ? r : 'tablero'
+  return r === 'backlog' || r === 'planificacion' || r === 'sprints' || r === 'epicas'
+    ? r
+    : 'tablero'
 }
 
 function Shell() {
@@ -42,7 +46,9 @@ function Shell() {
         <div className="min-h-0 flex-1">
           {ruta === 'tablero' && <Tablero />}
           {ruta === 'backlog' && <Backlog />}
+          {ruta === 'planificacion' && <Planificacion />}
           {ruta === 'sprints' && <Sprints />}
+          {ruta === 'epicas' && <Epicas />}
         </div>
       </main>
     </div>

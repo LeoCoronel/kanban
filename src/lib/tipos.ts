@@ -3,6 +3,7 @@ export type Prioridad = 'Alta' | 'Media' | 'Baja'
 export type Estado = 'backlog' | 'por_hacer' | 'en_progreso' | 'en_revision' | 'hecho'
 export type EstadoSprint = 'planificado' | 'activo' | 'cerrado'
 export type TipoTarjeta = 'historia' | 'tarea'
+export type TonoEpica = 'acento' | 'ok' | 'warn' | 'info' | 'neutro'
 
 export interface Historia {
   id: string
@@ -18,10 +19,21 @@ export interface Historia {
   notas: string
   estado: Estado
   sprint_id: string | null
+  epica_id: string | null
   responsable: string
   orden: number
   created_at: string
   updated_at: string
+}
+
+/** Agrupa tarjetas de un mismo tema. Una épica transversal se trabaja en todos los sprints. */
+export interface Epica {
+  id: string
+  nombre: string
+  descripcion: string
+  tono: TonoEpica
+  transversal: boolean
+  created_at: string
 }
 
 export interface Sprint {
@@ -37,15 +49,19 @@ export interface Sprint {
 
 export type NuevaHistoria = Omit<Historia, 'id' | 'created_at' | 'updated_at'>
 export type NuevoSprint = Omit<Sprint, 'id' | 'created_at' | 'cerrado_en'>
+export type NuevaEpica = Omit<Epica, 'id' | 'created_at'>
 
 export interface Repo {
   modo: 'supabase' | 'local'
-  listar(): Promise<{ historias: Historia[]; sprints: Sprint[] }>
-  crearHistoria(h: NuevaHistoria): Promise<void>
+  listar(): Promise<{ historias: Historia[]; sprints: Sprint[]; epicas: Epica[] }>
+  crearHistorias(hs: NuevaHistoria[]): Promise<void>
   actualizarHistorias(ids: string[], patch: Partial<NuevaHistoria>): Promise<void>
   eliminarHistoria(id: string): Promise<void>
   crearSprint(s: NuevoSprint): Promise<void>
   actualizarSprint(id: string, patch: Partial<Sprint>): Promise<void>
+  crearEpica(e: NuevaEpica): Promise<void>
+  actualizarEpica(id: string, patch: Partial<NuevaEpica>): Promise<void>
+  eliminarEpica(id: string): Promise<void>
   importarSemilla(): Promise<void>
   suscribir(alCambiar: () => void): () => void
 }

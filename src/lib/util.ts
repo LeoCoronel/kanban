@@ -1,5 +1,5 @@
 import { PESO_PRIORIDAD } from './constantes'
-import type { Historia, Sprint } from './tipos'
+import type { Epica, Historia, Sprint } from './tipos'
 
 /** Título corto de la tarjeta: la descripción, o la acción ("quiero ...") de la historia. */
 export function titulo(h: Pick<Historia, 'descripcion' | 'historia'>): string {
@@ -53,8 +53,18 @@ export interface Filtros {
   version: string
   prioridad: string
   responsable: string
+  epica: string
 }
-export const FILTROS_VACIOS: Filtros = { texto: '', version: '', prioridad: '', responsable: '' }
+export const FILTROS_VACIOS: Filtros = {
+  texto: '',
+  version: '',
+  prioridad: '',
+  responsable: '',
+  epica: '',
+}
+
+/** Valor del filtro de épica para tarjetas sin épica. */
+export const SIN_EPICA = '__sin_epica'
 
 export function filtrar(hs: Historia[], f: Filtros): Historia[] {
   const q = f.texto.trim().toLowerCase()
@@ -62,6 +72,8 @@ export function filtrar(hs: Historia[], f: Filtros): Historia[] {
     if (f.version && h.version !== f.version) return false
     if (f.prioridad && h.prioridad !== f.prioridad) return false
     if (f.responsable && h.responsable !== f.responsable) return false
+    if (f.epica === SIN_EPICA ? h.epica_id !== null : f.epica && h.epica_id !== f.epica)
+      return false
     if (!q) return true
     return `${h.codigo} ${titulo(h)} ${h.historia} ${h.notas}`.toLowerCase().includes(q)
   })
@@ -70,4 +82,28 @@ export function filtrar(hs: Historia[], f: Filtros): Historia[] {
 export function rangoFechas(s: Pick<Sprint, 'fecha_inicio' | 'fecha_fin'>): string {
   if (!s.fecha_inicio && !s.fecha_fin) return ''
   return `${fechaCorta(s.fecha_inicio)} → ${fechaCorta(s.fecha_fin)}`
+}
+
+/** Prefijo de código para tarjetas de una épica: "Documentación" → "DOC". */
+export function prefijoEpica(nombre: string): string {
+  const limpio = nombre
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z]/g, '')
+    .toUpperCase()
+  return limpio.slice(0, 3) || 'EPI'
+}
+
+/** Genera n códigos libres con el formato DOC-01, DOC-02... */
+export function codigosEpica(epica: Epica, historias: Historia[], n: number): string[] {
+  const prefijo = prefijoEpica(epica.nombre)
+  const usados = new Set(historias.map((h) => h.codigo))
+  const codigos: string[] = []
+  let i = 1
+  while (codigos.length < n) {
+    const c = `${prefijo}-${String(i).padStart(2, '0')}`
+    if (!usados.has(c)) codigos.push(c)
+    i++
+  }
+  return codigos
 }

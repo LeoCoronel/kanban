@@ -1,8 +1,10 @@
 import { useDraggable } from '@dnd-kit/core'
+import { Repeat } from 'lucide-react'
 import { ESTADOS } from '@/lib/constantes'
 import type { Historia } from '@/lib/tipos'
+import { useDatos } from '@/lib/useDatos'
 import { iniciales, titulo } from '@/lib/util'
-import { InsigniaPrioridad, InsigniaVersion } from './Insignias'
+import { InsigniaEpica, InsigniaPrioridad, InsigniaVersion } from './Insignias'
 
 interface VistaProps {
   historia: Historia
@@ -11,6 +13,9 @@ interface VistaProps {
 }
 
 export function TarjetaVista({ historia: h, mostrarEstado, arrastrando }: VistaProps) {
+  const { sprints, epicas } = useDatos()
+  const sprint = sprints.find((s) => s.id === h.sprint_id)
+  const epica = epicas.find((e) => e.id === h.epica_id)
   return (
     <div
       className={`flex flex-col gap-2 rounded-lg border bg-bg-surface p-3 text-left ${
@@ -25,8 +30,23 @@ export function TarjetaVista({ historia: h, mostrarEstado, arrastrando }: VistaP
         </div>
       </div>
       <p className="line-clamp-2 text-sm font-medium text-text-primary">{titulo(h)}</p>
+      {(h.tipo === 'historia' || epica) && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {h.tipo === 'historia' && <InsigniaVersion version={h.version} />}
+          {epica && <InsigniaEpica epica={epica} />}
+        </div>
+      )}
       <div className="flex items-center justify-between gap-2">
-        {h.tipo === 'historia' ? <InsigniaVersion version={h.version} /> : <span />}
+        <span
+          className={`flex min-w-0 items-center gap-1 text-xs ${sprint ? 'text-text-secondary' : 'text-text-muted'}`}
+          title={sprint ? `Sprint: ${sprint.nombre}` : 'Todavía sin sprint'}
+        >
+          <Repeat size={12} strokeWidth={1.5} aria-hidden className="shrink-0" />
+          <span className="truncate">
+            {sprint ? sprint.nombre : 'Sin sprint'}
+            {sprint?.estado === 'planificado' && ' · plan'}
+          </span>
+        </span>
         <div className="flex items-center gap-2">
           {h.valor != null && h.esfuerzo != null && (
             <span
