@@ -9,10 +9,15 @@ import { Epicas } from './pages/Epicas'
 import { Planificacion } from './pages/Planificacion'
 import { Sprints } from './pages/Sprints'
 import { Tablero } from './pages/Tablero'
+import { Trazabilidad } from './pages/Trazabilidad'
 
 function rutaActual(): Ruta {
   const r = window.location.hash.replace(/^#\/?/, '')
-  return r === 'backlog' || r === 'planificacion' || r === 'sprints' || r === 'epicas'
+  return r === 'backlog' ||
+    r === 'planificacion' ||
+    r === 'sprints' ||
+    r === 'epicas' ||
+    r === 'trazabilidad'
     ? r
     : 'tablero'
 }
@@ -49,6 +54,7 @@ function Shell() {
           {ruta === 'planificacion' && <Planificacion />}
           {ruta === 'sprints' && <Sprints />}
           {ruta === 'epicas' && <Epicas />}
+          {ruta === 'trazabilidad' && <Trazabilidad />}
         </div>
       </main>
     </div>

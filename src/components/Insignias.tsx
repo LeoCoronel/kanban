@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   Ban,
   CheckCircle2,
   ChevronDown,
@@ -7,11 +8,15 @@ import {
   Layers,
   Lock,
   Minus,
+  Play,
   Rocket,
   Target,
+  Undo2,
+  type LucideIcon,
 } from 'lucide-react'
 import type { Epica, EstadoSprint, Prioridad, Version } from '@/lib/tipos'
-import { Insignia } from './ui/Insignia'
+import type { PasoSprint } from '@/lib/util'
+import { Insignia, type Tono } from './ui/Insignia'
 
 export function InsigniaPrioridad({ prioridad }: { prioridad: Prioridad }) {
   if (prioridad === 'Alta')
@@ -75,6 +80,24 @@ export function InsigniaSprint({ estado }: { estado: EstadoSprint }) {
   return (
     <Insignia tono="info" icono={Clock}>
       Planificado
+    </Insignia>
+  )
+}
+
+const PASOS: Record<PasoSprint, { tono: Tono; icono: LucideIcon; texto: string }> = {
+  hecha: { tono: 'ok', icono: CheckCircle2, texto: 'Hecha' },
+  arrastrada: { tono: 'warn', icono: ArrowRight, texto: 'Arrastrada' },
+  devuelta: { tono: 'danger', icono: Undo2, texto: 'Al backlog' },
+  en_curso: { tono: 'acento', icono: Play, texto: 'En curso' },
+  planificada: { tono: 'info', icono: Clock, texto: 'Planificada' },
+  sin_detalle: { tono: 'neutro', icono: Minus, texto: 'Sin detalle' },
+}
+
+export function InsigniaPaso({ paso }: { paso: PasoSprint }) {
+  const { tono, icono, texto } = PASOS[paso]
+  return (
+    <Insignia tono={tono} icono={icono}>
+      {texto}
     </Insignia>
   )
 }

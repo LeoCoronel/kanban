@@ -48,12 +48,12 @@ export function TarjetaVista({ historia: h, mostrarEstado, arrastrando }: VistaP
           </span>
         </span>
         <div className="flex items-center gap-2">
-          {h.valor != null && h.esfuerzo != null && (
+          {h.esfuerzo != null && (
             <span
               className="text-code text-xs text-text-muted tabular-nums"
-              title="Valor · Esfuerzo"
+              title={h.valor != null ? 'Valor · Esfuerzo' : 'Esfuerzo'}
             >
-              V{h.valor} · E{h.esfuerzo}
+              {h.valor != null && `V${h.valor} · `}E{h.esfuerzo}
             </span>
           )}
           {h.responsable && (

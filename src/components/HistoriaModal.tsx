@@ -1,10 +1,11 @@
 import { Lock, Trash2 } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { ESTADOS, ESTADOS_SPRINT, PRIORIDADES, VERSIONES } from '@/lib/constantes'
+import { ESCALA_ESFUERZO, ESTADOS, ESTADOS_SPRINT, PRIORIDADES, VERSIONES } from '@/lib/constantes'
 import { useDatos } from '@/lib/useDatos'
 import type { Estado, Historia, NuevaHistoria, Prioridad, TipoTarjeta, Version } from '@/lib/tipos'
-import { siguienteCodigo } from '@/lib/util'
+import { recorrido, siguienteCodigo } from '@/lib/util'
 import { ConfirmarModal } from './ConfirmarModal'
+import { InsigniaPaso } from './Insignias'
 import { Boton } from './ui/Boton'
 import { AreaTexto, Campo, Entrada, Selector } from './ui/Campo'
 import { Modal } from './ui/Modal'
@@ -18,7 +19,7 @@ interface Props {
 const ESCALA = ['1', '2', '3', '4', '5']
 
 export function HistoriaModal({ historia, onCerrar }: Props) {
-  const { historias, sprints, epicas, crearHistoria, actualizarHistoria, eliminarHistoria } =
+  const { historias, sprints, epicas, trazas, crearHistoria, actualizarHistoria, eliminarHistoria } =
     useDatos()
   const editando = Boolean(historia)
 
@@ -31,6 +32,9 @@ export function HistoriaModal({ historia, onCerrar }: Props) {
   const [notas, setNotas] = useState(historia?.notas ?? '')
   const [valor, setValor] = useState(historia?.valor?.toString() ?? '3')
   const [esfuerzo, setEsfuerzo] = useState(historia?.esfuerzo?.toString() ?? '3')
+  // Tarjetas viejas con 4 u otro valor fuera de Fibonacci: se muestran tal cual hasta que se reestimen.
+  const esfuerzoFueraDeEscala =
+    historia?.esfuerzo != null && !(ESCALA_ESFUERZO as readonly number[]).includes(historia.esfuerzo)
   const [prioridad, setPrioridad] = useState<Prioridad>(historia?.prioridad ?? 'Media')
   const [responsable, setResponsable] = useState(historia?.responsable ?? '')
   const [sprintId, setSprintId] = useState(historia?.sprint_id ?? '')
@@ -47,6 +51,7 @@ export function HistoriaModal({ historia, onCerrar }: Props) {
   const opcionesSprint = sprints.filter((s) => s.estado !== 'cerrado')
   const responsables = [...new Set(historias.map((h) => h.responsable).filter(Boolean))]
   const esHistoria = tipo === 'historia'
+  const pasos = historia ? recorrido(historia, sprints, trazas) : []
 
   async function guardar(e: FormEvent) {
     e.preventDefault()
@@ -68,7 +73,7 @@ export function HistoriaModal({ historia, onCerrar }: Props) {
         .filter(Boolean),
       notas: notas.trim(),
       valor: esHistoria ? Number(valor) : null,
-      esfuerzo: esHistoria ? Number(esfuerzo) : null,
+      esfuerzo: Number(esfuerzo),
       prioridad,
       responsable: responsable.trim(),
       epica_id: epicaId || null,
@@ -167,23 +172,24 @@ export function HistoriaModal({ historia, onCerrar }: Props) {
         </Campo>
 
         {esHistoria && (
-          <>
-            <Campo etiqueta="Valor de negocio (1-5)">
-              <Selector value={valor} onChange={(e) => setValor(e.target.value)}>
-                {ESCALA.map((n) => (
-                  <option key={n}>{n}</option>
-                ))}
-              </Selector>
-            </Campo>
-            <Campo etiqueta="Esfuerzo (1-5)">
-              <Selector value={esfuerzo} onChange={(e) => setEsfuerzo(e.target.value)}>
-                {ESCALA.map((n) => (
-                  <option key={n}>{n}</option>
-                ))}
-              </Selector>
-            </Campo>
-          </>
+          <Campo etiqueta="Valor de negocio (1-5)">
+            <Selector value={valor} onChange={(e) => setValor(e.target.value)}>
+              {ESCALA.map((n) => (
+                <option key={n}>{n}</option>
+              ))}
+            </Selector>
+          </Campo>
         )}
+        <Campo etiqueta="Esfuerzo (1, 2, 3, 5, 8)" ayuda="Story points en escala Fibonacci.">
+          <Selector value={esfuerzo} onChange={(e) => setEsfuerzo(e.target.value)}>
+            {esfuerzoFueraDeEscala && <option value={esfuerzo}>{esfuerzo} (reestimar)</option>}
+            {ESCALA_ESFUERZO.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </Selector>
+        </Campo>
 
         <Campo etiqueta="Criterios de aceptación" className="md:col-span-2" ayuda="Uno por línea.">
           <AreaTexto value={criterios} onChange={(e) => setCriterios(e.target.value)} rows={5} />
@@ -260,6 +266,19 @@ export function HistoriaModal({ historia, onCerrar }: Props) {
             </Selector>
           </Campo>
         </div>
+
+        {pasos.length > 0 && (
+          <section className="md:col-span-2" aria-label="Recorrido por sprints">
+            <h3 className="mb-2 text-sm font-medium text-text-primary">Recorrido por sprints</h3>
+            <ul className="flex flex-wrap gap-2">
+              {pasos.map(({ sprint, paso }) => (
+                <li key={sprint.id} className="flex items-center gap-2 text-sm text-text-secondary">
+                  {sprint.nombre} <InsigniaPaso paso={paso} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {bloqueada && (
           <p className="flex items-center gap-2 text-sm text-text-muted md:col-span-2">

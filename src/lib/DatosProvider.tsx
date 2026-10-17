@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { DatosContexto, type Datos, type Destino } from './datosContext'
 import { repo } from './repo'
-import type { Epica, Historia, Sprint } from './tipos'
+import type { Epica, Historia, NuevaSprintHistoria, Sprint, SprintHistoria } from './tipos'
 
 const mensaje = (e: unknown) => (e instanceof Error ? e.message : 'Ocurrió un error inesperado.')
 
@@ -9,6 +9,7 @@ export function DatosProvider({ children }: { children: ReactNode }) {
   const [historias, setHistorias] = useState<Historia[]>([])
   const [sprints, setSprints] = useState<Sprint[]>([])
   const [epicas, setEpicas] = useState<Epica[]>([])
+  const [trazas, setTrazas] = useState<SprintHistoria[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -18,6 +19,7 @@ export function DatosProvider({ children }: { children: ReactNode }) {
       setHistorias(d.historias)
       setSprints(d.sprints)
       setEpicas(d.epicas)
+      setTrazas(d.trazas)
     } catch (e) {
       setError(mensaje(e))
     } finally {
@@ -33,6 +35,7 @@ export function DatosProvider({ children }: { children: ReactNode }) {
         setHistorias(d.historias)
         setSprints(d.sprints)
         setEpicas(d.epicas)
+        setTrazas(d.trazas)
       })
       .catch((e: unknown) => setError(mensaje(e)))
       .finally(() => setCargando(false))
@@ -60,6 +63,7 @@ export function DatosProvider({ children }: { children: ReactNode }) {
       historias,
       sprints,
       epicas,
+      trazas,
       sprintActivo: sprints.find((s) => s.estado === 'activo'),
       cargando,
       error,
@@ -84,9 +88,22 @@ export function DatosProvider({ children }: { children: ReactNode }) {
         }),
       cerrarSprint: (id, destinoPendientes) =>
         ejecutar(async () => {
-          const pendientes = historias
-            .filter((h) => h.sprint_id === id && h.estado !== 'hecho')
-            .map((h) => h.id)
+          const delSprint = historias.filter((h) => h.sprint_id === id)
+          const pendientes = delSprint.filter((h) => h.estado !== 'hecho').map((h) => h.id)
+          // La foto se guarda antes de mover nada: si falla, el sprint queda como estaba.
+          const fotos: NuevaSprintHistoria[] = delSprint.map((h) => {
+            const hecha = h.estado === 'hecho'
+            const destino = hecha || destinoPendientes === 'backlog' ? null : destinoPendientes
+            return {
+              sprint_id: id,
+              historia_id: h.id,
+              codigo: h.codigo,
+              estado_final: h.estado,
+              resultado: hecha ? 'hecha' : destino ? 'arrastrada' : 'devuelta',
+              destino_sprint_id: destino,
+            }
+          })
+          await repo.registrarTrazas(fotos)
           if (pendientes.length) {
             await repo.actualizarHistorias(
               pendientes,
@@ -105,7 +122,7 @@ export function DatosProvider({ children }: { children: ReactNode }) {
       eliminarEpica: (id) => ejecutar(() => repo.eliminarEpica(id)),
       importarSemilla: () => ejecutar(() => repo.importarSemilla()),
     }),
-    [historias, sprints, epicas, cargando, error, ejecutar],
+    [historias, sprints, epicas, trazas, cargando, error, ejecutar],
   )
 
   return <DatosContexto.Provider value={valor}>{children}</DatosContexto.Provider>

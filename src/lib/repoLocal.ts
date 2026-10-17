@@ -1,5 +1,14 @@
 import { epicaDocumentacion, historiasIniciales, sprint0, tareasSprint0 } from './semilla'
-import type { Epica, Historia, NuevaEpica, NuevaHistoria, NuevoSprint, Repo, Sprint } from './tipos'
+import type {
+  Epica,
+  Historia,
+  NuevaEpica,
+  NuevaHistoria,
+  NuevoSprint,
+  Repo,
+  Sprint,
+  SprintHistoria,
+} from './tipos'
 
 const CLAVE = 'historias-bv:v1'
 const EVENTO = 'historias-bv:cambio'
@@ -8,6 +17,7 @@ interface Datos {
   historias: Historia[]
   sprints: Sprint[]
   epicas?: Epica[]
+  trazas?: SprintHistoria[]
   semillado: boolean
 }
 
@@ -73,7 +83,21 @@ export const repoLocal: Repo = {
       historias: d.historias.map((h) => ({ ...h, epica_id: h.epica_id ?? null })),
       sprints: d.sprints,
       epicas: d.epicas ?? [],
+      trazas: d.trazas ?? [],
     }
+  },
+  async registrarTrazas(trazas) {
+    const d = leer()
+    const actuales = d.trazas ?? []
+    const nuevas = trazas.map((t) => ({ ...t, id: crypto.randomUUID(), created_at: ahora() }))
+    // Una traza por tarjeta y sprint: la más reciente reemplaza a la anterior.
+    d.trazas = [
+      ...actuales.filter(
+        (a) => !nuevas.some((n) => n.sprint_id === a.sprint_id && n.historia_id === a.historia_id),
+      ),
+      ...nuevas,
+    ]
+    guardar(d)
   },
   async crearHistorias(hs) {
     const d = leer()

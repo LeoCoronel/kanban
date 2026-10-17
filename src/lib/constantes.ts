@@ -27,3 +27,6 @@ export const TONOS_EPICA: { valor: TonoEpica; nombre: string }[] = [
   { valor: 'warn', nombre: 'Amarillo' },
   { valor: 'neutro', nombre: 'Gris' },
 ]
+
+/** Escala de esfuerzo: Fibonacci (story points). */
+export const ESCALA_ESFUERZO = [1, 2, 3, 5, 8] as const

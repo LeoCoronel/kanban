@@ -42,7 +42,7 @@ create table if not exists public.historias (
   historia      text not null default '',
   descripcion   text not null default '',
   valor         smallint check (valor between 1 and 5),
-  esfuerzo      smallint check (esfuerzo between 1 and 5),
+  esfuerzo      smallint check (esfuerzo in (1, 2, 3, 5, 8)),
   prioridad     text not null default 'Media' check (prioridad in ('Alta', 'Media', 'Baja')),
   criterios     text[] not null default '{}',
   notas         text not null default '',
@@ -70,6 +70,25 @@ drop trigger if exists historias_updated_at on public.historias;
 create trigger historias_updated_at before update on public.historias
   for each row execute function public.tocar_updated_at();
 
+-- ───────────── Trazabilidad de sprints ─────────────
+-- Foto de cada tarjeta al cerrar un sprint (hecha, arrastrada o devuelta al backlog).
+create table if not exists public.sprint_historias (
+  id                 uuid primary key default gen_random_uuid(),
+  sprint_id          uuid not null references public.sprints (id) on delete cascade,
+  historia_id        uuid references public.historias (id) on delete set null,
+  codigo             text not null,
+  estado_final       text not null
+                     check (estado_final in ('backlog', 'por_hacer', 'en_progreso', 'en_revision', 'hecho')),
+  resultado          text not null check (resultado in ('hecha', 'arrastrada', 'devuelta')),
+  destino_sprint_id  uuid references public.sprints (id) on delete set null,
+  created_at         timestamptz not null default now()
+);
+
+create unique index if not exists sprint_historias_unica
+  on public.sprint_historias (sprint_id, historia_id);
+create index if not exists sprint_historias_historia_idx
+  on public.sprint_historias (historia_id);
+
 -- ───────────── Seguridad (RLS) ─────────────
 -- La app no tiene login: cualquiera que tenga la URL y la anon key puede leer y escribir.
 -- Es aceptable para un equipo de 4 en una URL poco difundida; si hace falta cerrarlo,
@@ -77,6 +96,11 @@ create trigger historias_updated_at before update on public.historias
 alter table public.sprints   enable row level security;
 alter table public.historias enable row level security;
 alter table public.epicas    enable row level security;
+alter table public.sprint_historias enable row level security;
+
+drop policy if exists "acceso_equipo_sprint_historias" on public.sprint_historias;
+create policy "acceso_equipo_sprint_historias" on public.sprint_historias
+  for all to anon using (true) with check (true);
 
 drop policy if exists "acceso_equipo_sprints" on public.sprints;
 create policy "acceso_equipo_sprints" on public.sprints
@@ -95,7 +119,7 @@ create policy "acceso_equipo_epicas" on public.epicas
 do $$
 declare t text;
 begin
-  foreach t in array array['sprints', 'historias', 'epicas'] loop
+  foreach t in array array['sprints', 'historias', 'epicas', 'sprint_historias'] loop
     if not exists (
       select 1 from pg_publication_tables
       where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = t

@@ -7,6 +7,7 @@ import type {
   NuevaHistoria,
   NuevoSprint,
   Sprint,
+  SprintHistoria,
 } from './tipos'
 
 export interface Destino {
@@ -19,6 +20,8 @@ export interface Datos {
   historias: Historia[]
   sprints: Sprint[]
   epicas: Epica[]
+  /** Foto de cada tarjeta al cerrar un sprint. */
+  trazas: SprintHistoria[]
   sprintActivo: Sprint | undefined
   cargando: boolean
   error: string | null

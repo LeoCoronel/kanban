@@ -1,5 +1,32 @@
 import { PESO_PRIORIDAD } from './constantes'
-import type { Epica, Historia, Sprint } from './tipos'
+import type { Epica, Historia, Sprint, SprintHistoria } from './tipos'
+
+/** Qué pasó con una tarjeta en un sprint. `sin_detalle`: sprint cerrado antes de existir la trazabilidad. */
+export type PasoSprint = 'hecha' | 'arrastrada' | 'devuelta' | 'en_curso' | 'planificada' | 'sin_detalle'
+
+/** Paso de la tarjeta en el sprint, o null si no estuvo en él. */
+export function pasoEnSprint(h: Historia, s: Sprint, trazas: SprintHistoria[]): PasoSprint | null {
+  const t = trazas.find((x) => x.sprint_id === s.id && x.historia_id === h.id)
+  if (t) return t.resultado
+  if (h.sprint_id !== s.id) return null
+  if (s.estado === 'activo') return 'en_curso'
+  if (s.estado === 'planificado') return 'planificada'
+  return 'sin_detalle'
+}
+
+/** Sprints por los que pasó la tarjeta, en orden cronológico. */
+export function recorrido(
+  h: Historia,
+  sprints: Sprint[],
+  trazas: SprintHistoria[],
+): { sprint: Sprint; paso: PasoSprint }[] {
+  return [...sprints]
+    .sort((a, b) => a.created_at.localeCompare(b.created_at))
+    .flatMap((sprint) => {
+      const paso = pasoEnSprint(h, sprint, trazas)
+      return paso ? [{ sprint, paso }] : []
+    })
+}
 
 /** Título corto de la tarjeta: la descripción, o la acción ("quiero ...") de la historia. */
 export function titulo(h: Pick<Historia, 'descripcion' | 'historia'>): string {

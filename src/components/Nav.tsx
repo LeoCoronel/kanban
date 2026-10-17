@@ -1,6 +1,6 @@
-import { CalendarRange, KanbanSquare, Layers, ListChecks, Repeat } from 'lucide-react'
+import { CalendarRange, GitBranch, KanbanSquare, Layers, ListChecks, Repeat } from 'lucide-react'
 
-export type Ruta = 'tablero' | 'backlog' | 'planificacion' | 'sprints' | 'epicas'
+export type Ruta = 'tablero' | 'backlog' | 'planificacion' | 'sprints' | 'epicas' | 'trazabilidad'
 
 const ITEMS: { ruta: Ruta; etiqueta: string; icono: typeof KanbanSquare }[] = [
   { ruta: 'tablero', etiqueta: 'Tablero', icono: KanbanSquare },
@@ -8,6 +8,7 @@ const ITEMS: { ruta: Ruta; etiqueta: string; icono: typeof KanbanSquare }[] = [
   { ruta: 'planificacion', etiqueta: 'Plan', icono: CalendarRange },
   { ruta: 'sprints', etiqueta: 'Sprints', icono: Repeat },
   { ruta: 'epicas', etiqueta: 'Épicas', icono: Layers },
+  { ruta: 'trazabilidad', etiqueta: 'Traza', icono: GitBranch },
 ]
 
 /** Barra inferior en mobile, riel lateral desde tablet. */

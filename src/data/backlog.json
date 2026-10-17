@@ -272,7 +272,7 @@
     "historia": "Como usuario del sistema, quiero configurar la estructura de compartimentos (persianas, cajones, techo, cabina) de cada móvil, para mapear con precisión la ubicación física de los materiales en el vehículo.",
     "descripcion": "Mapeo y estructuración de compartimentos físicos en cada unidad.",
     "valor": 4,
-    "esfuerzo": 4,
+    "esfuerzo": 5,
     "prioridad": "Media",
     "criterios": [
       "Opción \"Gestionar Compartimentos\" en la ficha del móvil.",
@@ -288,7 +288,7 @@
     "historia": "Como encargado de automotores, quiero registrar el movimiento o traspaso de herramientas y materiales entre diferentes móviles o hacia el depósito, para mantener el inventario exacto cuando los equipos se prestan o reasignan.",
     "descripcion": "",
     "valor": 4,
-    "esfuerzo": 5,
+    "esfuerzo": 8,
     "prioridad": "Media",
     "criterios": [
       "Seleccionar materiales en inventario y usar \"Transferir\".",
@@ -305,7 +305,7 @@
     "historia": "Como encargado de automotores, quiero gestionar el stock de repuestos mecánicos y consumibles (aceite, filtros, lámparas) en el taller del cuartel, para asegurar que los mantenimientos preventivos y reparaciones menores puedan realizarse sin demoras.",
     "descripcion": "Control de stock e inventario de repuestos de taller.",
     "valor": 4,
-    "esfuerzo": 4,
+    "esfuerzo": 5,
     "prioridad": "Media",
     "criterios": [
       "Sección independiente \"Stock\".",
@@ -339,7 +339,7 @@
     "historia": "Como personal administrativo, quiero vincular la solicitud del damnificado con el parte de actuación/salida correspondiente del sistema, para extraer automáticamente los datos técnicos del siniestro y verificar que la intervención realmente existió.",
     "descripcion": "Vinculación directa entre el pedido del damnificado y el parte operativo de salida.",
     "valor": 4,
-    "esfuerzo": 4,
+    "esfuerzo": 5,
     "prioridad": "Baja",
     "criterios": [
       "Botón o campo de búsqueda \"Vincular Parte de Salida\".",
@@ -388,7 +388,7 @@
     "historia": "Como usuario del sistema, quiero registrar las reparaciones o mantenimientos mecánicos realizados en un móvil que estaba \"Fuera de Servicio\", para documentar el arreglo y devolverlo al estado operativo.",
     "descripcion": "Registro de reparaciones mecánicas en el reingreso de unidades a servicio.",
     "valor": 4,
-    "esfuerzo": 4,
+    "esfuerzo": 5,
     "prioridad": "Media",
     "criterios": [
       "Botón \"Registrar Reparación / Alta\" en móvil fuera de servicio.",
@@ -407,7 +407,7 @@
     "historia": "Como usuario del sistema, quiero visualizar alertas sobre vencimientos de seguros, VTV y mantenimientos programados de cada móvil, para evitar que las unidades salgan a la calle en infracción o sufran daños.",
     "descripcion": "Sistema de alertas tempranas de vencimientos legales y seguros.",
     "valor": 3,
-    "esfuerzo": 5,
+    "esfuerzo": 8,
     "prioridad": "Alta",
     "criterios": [
       "Configurar fechas de VTV, seguro y GNC.",
@@ -440,7 +440,7 @@
     "historia": "Como jefe de cuartel, quiero consultar un historial unificado (hoja de vida) de cada móvil, para auditar toda la actividad del vehículo a lo largo del tiempo.",
     "descripcion": "Bitácora histórica unificada por unidad vehicular.",
     "valor": 4,
-    "esfuerzo": 5,
+    "esfuerzo": 8,
     "prioridad": "Media",
     "criterios": [
       "Pestaña \"Historial\" o en ficha del móvil.",
@@ -458,7 +458,7 @@
     "historia": "Como jefe de cuartel, quiero generar reportes exportables sobre el estado general de la flota, costos operativos e intervenciones por móvil en un período de tiempo, para la toma de decisiones financieras y operativas.",
     "descripcion": "Reportes ejecutivos globales de la flota y costos operativos.",
     "valor": 4,
-    "esfuerzo": 5,
+    "esfuerzo": 8,
     "prioridad": "Media",
     "criterios": [
       "Sección \"Reportes de Automotores\".",
@@ -489,7 +489,7 @@
     "historia": "Como jefe de cuartel, quiero aplicar mi firma electrónica/digital a las constancias generadas, para otorgarles validez oficial sin necesidad de imprimir el documento.",
     "descripcion": "Firma Digital",
     "valor": 2,
-    "esfuerzo": 5,
+    "esfuerzo": 8,
     "prioridad": "Baja",
     "criterios": [
       "Solo rol \"jefe de cuartel\" ve el botón \"Firmar Documento\".",
@@ -540,7 +540,7 @@
     "historia": "Como personal administrativo, quiero recibir una alerta en el sistema cuando la jefatura firme o rechace una constancia, para proceder inmediatamente con la entrega o corrección sin tener que revisar la bandeja manualmente.",
     "descripcion": "Sistema de notificaciones en tiempo real para el personal administrativo.",
     "valor": 3,
-    "esfuerzo": 5,
+    "esfuerzo": 8,
     "prioridad": "Baja",
     "criterios": [
       "Icono de campana en barra superior.",

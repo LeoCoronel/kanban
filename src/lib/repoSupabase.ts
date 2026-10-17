@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { epicaDocumentacion, historiasIniciales, sprint0, tareasSprint0 } from './semilla'
-import type { Epica, Historia, Repo, Sprint } from './tipos'
+import type { Epica, Historia, Repo, Sprint, SprintHistoria } from './tipos'
 
 export function crearRepoSupabase(url: string, clave: string): Repo {
   const sb = createClient(url, clave)
@@ -12,10 +12,11 @@ export function crearRepoSupabase(url: string, clave: string): Repo {
   return {
     modo: 'supabase',
     async listar() {
-      const [h, s, e] = await Promise.all([
+      const [h, s, e, t] = await Promise.all([
         sb.from('historias').select('*').order('orden', { ascending: true }),
         sb.from('sprints').select('*').order('created_at', { ascending: true }),
         sb.from('epicas').select('*').order('created_at', { ascending: true }),
+        sb.from('sprint_historias').select('*').order('created_at', { ascending: true }),
       ])
       fallar(h.error)
       fallar(s.error)
@@ -29,6 +30,19 @@ export function crearRepoSupabase(url: string, clave: string): Repo {
         historias: (h.data ?? []) as Historia[],
         sprints: (s.data ?? []) as Sprint[],
         epicas: (e.data ?? []) as Epica[],
+        // Si falta la migración de trazabilidad, el resto de la app sigue funcionando.
+        trazas: (t.error ? [] : (t.data ?? [])) as SprintHistoria[],
+      }
+    },
+    async registrarTrazas(trazas) {
+      if (!trazas.length) return
+      const { error } = await sb
+        .from('sprint_historias')
+        .upsert(trazas, { onConflict: 'sprint_id,historia_id' })
+      if (error) {
+        throw new Error(
+          `No se pudo guardar la trazabilidad (${error.message}). ¿Ejecutaste supabase/migracion-trazabilidad.sql?`,
+        )
       }
     },
     async crearHistorias(hs) {
@@ -90,6 +104,11 @@ export function crearRepoSupabase(url: string, clave: string): Repo {
         .on('postgres_changes', { event: '*', schema: 'public', table: 'historias' }, alCambiar)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'sprints' }, alCambiar)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'epicas' }, alCambiar)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'sprint_historias' },
+          alCambiar,
+        )
         .subscribe()
       return () => {
         void sb.removeChannel(canal)

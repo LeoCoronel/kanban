@@ -47,13 +47,35 @@ export interface Sprint {
   created_at: string
 }
 
+/** Cómo salió una tarjeta de un sprint al cerrarlo. */
+export type ResultadoSprint = 'hecha' | 'arrastrada' | 'devuelta'
+
+/** Foto de una tarjeta al cerrar un sprint: sirve para reconstruir por qué sprints pasó. */
+export interface SprintHistoria {
+  id: string
+  sprint_id: string
+  historia_id: string | null
+  codigo: string
+  estado_final: Estado
+  resultado: ResultadoSprint
+  destino_sprint_id: string | null
+  created_at: string
+}
+
 export type NuevaHistoria = Omit<Historia, 'id' | 'created_at' | 'updated_at'>
+export type NuevaSprintHistoria = Omit<SprintHistoria, 'id' | 'created_at'>
 export type NuevoSprint = Omit<Sprint, 'id' | 'created_at' | 'cerrado_en'>
 export type NuevaEpica = Omit<Epica, 'id' | 'created_at'>
 
 export interface Repo {
   modo: 'supabase' | 'local'
-  listar(): Promise<{ historias: Historia[]; sprints: Sprint[]; epicas: Epica[] }>
+  listar(): Promise<{
+    historias: Historia[]
+    sprints: Sprint[]
+    epicas: Epica[]
+    trazas: SprintHistoria[]
+  }>
+  registrarTrazas(trazas: NuevaSprintHistoria[]): Promise<void>
   crearHistorias(hs: NuevaHistoria[]): Promise<void>
   actualizarHistorias(ids: string[], patch: Partial<NuevaHistoria>): Promise<void>
   eliminarHistoria(id: string): Promise<void>
