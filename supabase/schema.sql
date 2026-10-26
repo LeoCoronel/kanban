@@ -50,6 +50,10 @@ create table if not exists public.historias (
                 check (estado in ('backlog', 'por_hacer', 'en_progreso', 'en_revision', 'hecho')),
   sprint_id     uuid references public.sprints (id) on delete set null,
   epica_id      uuid references public.epicas (id) on delete set null,
+  -- Solo tareas: la user story a la que pertenecen (ver migracion-tareas-hijas.sql)
+  historia_padre_id uuid references public.historias (id) on delete cascade,
+  -- Criterios como checklist [{ texto, hecho }]; `criterios` queda por compatibilidad
+  criterios_check jsonb not null default '[]'::jsonb,
   responsable   text not null default '',
   orden         integer not null default 0,
   created_at    timestamptz not null default now(),
@@ -58,6 +62,28 @@ create table if not exists public.historias (
 
 create index if not exists historias_sprint_idx on public.historias (sprint_id);
 create index if not exists historias_epica_idx on public.historias (epica_id);
+create index if not exists historias_padre_idx on public.historias (historia_padre_id);
+
+-- Una historia nunca tiene padre; el padre de una tarea tiene que ser una historia.
+alter table public.historias drop constraint if exists historias_padre_solo_tareas;
+alter table public.historias add constraint historias_padre_solo_tareas
+  check (tipo = 'tarea' or historia_padre_id is null);
+
+create or replace function public.validar_padre_es_historia() returns trigger
+language plpgsql set search_path = public as $$
+begin
+  if new.historia_padre_id is not null and not exists (
+    select 1 from public.historias where id = new.historia_padre_id and tipo = 'historia'
+  ) then
+    raise exception 'El padre de una tarea debe ser una user story';
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists historias_validar_padre on public.historias;
+create trigger historias_validar_padre
+  before insert or update of historia_padre_id on public.historias
+  for each row execute function public.validar_padre_es_historia();
 
 create or replace function public.tocar_updated_at() returns trigger
 language plpgsql as $$

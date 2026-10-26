@@ -26,9 +26,14 @@ export interface Datos {
   cargando: boolean
   error: string | null
   limpiarError: () => void
+  /** Advertencia que no bloquea (ej.: US pasada a Hecho con tareas pendientes). */
+  aviso: string | null
+  limpiarAviso: () => void
   crearHistoria: (h: NuevaHistoria) => Promise<boolean>
   crearHistorias: (hs: NuevaHistoria[]) => Promise<boolean>
+  /** Si es una user story, sus tareas heredan versión, prioridad y sprint. */
   actualizarHistoria: (id: string, patch: Partial<NuevaHistoria>) => Promise<boolean>
+  /** Una US arrastra sus tareas; una tarea no puede salir del sprint de su US. */
   moverHistoria: (id: string, destino: Destino) => Promise<void>
   eliminarHistoria: (id: string) => Promise<boolean>
   crearSprint: (s: NuevoSprint) => Promise<boolean>

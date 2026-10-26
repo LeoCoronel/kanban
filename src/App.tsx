@@ -24,7 +24,7 @@ function rutaActual(): Ruta {
 
 function Shell() {
   const [ruta, setRuta] = useState<Ruta>(rutaActual)
-  const { modo, error, limpiarError } = useDatos()
+  const { modo, error, limpiarError, aviso, limpiarAviso } = useDatos()
 
   useEffect(() => {
     const alCambiar = () => setRuta(rutaActual())
@@ -46,6 +46,11 @@ function Shell() {
         {error && (
           <div className="px-(--layout-margin) pt-4">
             <Aviso mensaje={error} onCerrar={limpiarError} />
+          </div>
+        )}
+        {aviso && (
+          <div className="px-(--layout-margin) pt-4">
+            <Aviso tono="warn" mensaje={aviso} onCerrar={limpiarAviso} />
           </div>
         )}
         <div className="min-h-0 flex-1">

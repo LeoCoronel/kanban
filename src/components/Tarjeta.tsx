@@ -1,9 +1,9 @@
 import { useDraggable } from '@dnd-kit/core'
-import { Repeat } from 'lucide-react'
+import { CornerLeftUp, ListChecks, ListTodo, Repeat } from 'lucide-react'
 import { ESTADOS } from '@/lib/constantes'
 import type { Historia } from '@/lib/tipos'
 import { useDatos } from '@/lib/useDatos'
-import { iniciales, titulo } from '@/lib/util'
+import { iniciales, padreDe, tareasDe, titulo } from '@/lib/util'
 import { InsigniaEpica, InsigniaPrioridad, InsigniaVersion } from './Insignias'
 
 interface VistaProps {
@@ -13,9 +13,13 @@ interface VistaProps {
 }
 
 export function TarjetaVista({ historia: h, mostrarEstado, arrastrando }: VistaProps) {
-  const { sprints, epicas } = useDatos()
+  const { historias, sprints, epicas } = useDatos()
   const sprint = sprints.find((s) => s.id === h.sprint_id)
   const epica = epicas.find((e) => e.id === h.epica_id)
+  const us = padreDe(h, historias)
+  const hijas = h.tipo === 'historia' ? tareasDe(h, historias) : []
+  const hijasHechas = hijas.filter((t) => t.estado === 'hecho').length
+  const criteriosHechos = h.criterios.filter((c) => c.hecho).length
   return (
     <div
       className={`flex flex-col gap-2 rounded-lg border bg-bg-surface p-3 text-left ${
@@ -30,10 +34,42 @@ export function TarjetaVista({ historia: h, mostrarEstado, arrastrando }: VistaP
         </div>
       </div>
       <p className="line-clamp-2 text-sm font-medium text-text-primary">{titulo(h)}</p>
+      {us && (
+        <p
+          className="flex min-w-0 items-center gap-1 text-xs text-text-secondary"
+          title={`Tarea de ${us.codigo} · ${titulo(us)}`}
+        >
+          <CornerLeftUp size={12} strokeWidth={1.5} aria-hidden className="shrink-0" />
+          <span className="text-code shrink-0">{us.codigo}</span>
+          <span className="truncate text-text-muted">{titulo(us)}</span>
+        </p>
+      )}
       {(h.tipo === 'historia' || epica) && (
         <div className="flex flex-wrap items-center gap-1.5">
           {h.tipo === 'historia' && <InsigniaVersion version={h.version} />}
           {epica && <InsigniaEpica epica={epica} />}
+        </div>
+      )}
+      {(h.criterios.length > 0 || hijas.length > 0) && h.tipo === 'historia' && (
+        <div className="text-code flex items-center gap-3 text-xs text-text-muted tabular-nums">
+          {h.criterios.length > 0 && (
+            <span
+              className="flex items-center gap-1"
+              title={`Criterios de aceptación: ${criteriosHechos} de ${h.criterios.length} cumplidos`}
+            >
+              <ListChecks size={12} strokeWidth={1.5} aria-hidden />
+              {criteriosHechos}/{h.criterios.length}
+            </span>
+          )}
+          {hijas.length > 0 && (
+            <span
+              className="flex items-center gap-1"
+              title={`Tareas: ${hijasHechas} de ${hijas.length} hechas`}
+            >
+              <ListTodo size={12} strokeWidth={1.5} aria-hidden />
+              {hijasHechas}/{hijas.length}
+            </span>
+          )}
         </div>
       )}
       <div className="flex items-center justify-between gap-2">
@@ -48,7 +84,7 @@ export function TarjetaVista({ historia: h, mostrarEstado, arrastrando }: VistaP
           </span>
         </span>
         <div className="flex items-center gap-2">
-          {h.esfuerzo != null && (
+          {h.tipo === 'historia' && h.esfuerzo != null && (
             <span
               className="text-code text-xs text-text-muted tabular-nums"
               title={h.valor != null ? 'Valor · Esfuerzo' : 'Esfuerzo'}

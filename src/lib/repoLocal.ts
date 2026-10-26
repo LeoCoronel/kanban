@@ -1,4 +1,5 @@
 import { epicaDocumentacion, historiasIniciales, sprint0, tareasSprint0 } from './semilla'
+import { normalizarCriterios } from './util'
 import type {
   Epica,
   Historia,
@@ -80,7 +81,13 @@ export const repoLocal: Repo = {
       guardar(d)
     }
     return {
-      historias: d.historias.map((h) => ({ ...h, epica_id: h.epica_id ?? null })),
+      // Datos guardados con versiones anteriores: sin épica, sin padre o con criterios como textos.
+      historias: d.historias.map((h) => ({
+        ...h,
+        epica_id: h.epica_id ?? null,
+        historia_padre_id: h.historia_padre_id ?? null,
+        criterios: normalizarCriterios(h.criterios),
+      })),
       sprints: d.sprints,
       epicas: d.epicas ?? [],
       trazas: d.trazas ?? [],
@@ -117,7 +124,8 @@ export const repoLocal: Repo = {
   },
   async eliminarHistoria(id) {
     const d = leer()
-    d.historias = d.historias.filter((h) => h.id !== id)
+    // Igual que el `on delete cascade` de Supabase: borrar una US borra sus tareas.
+    d.historias = d.historias.filter((h) => h.id !== id && h.historia_padre_id !== id)
     guardar(d)
   },
   async crearSprint(s: NuevoSprint) {

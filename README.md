@@ -35,6 +35,8 @@ Sin variables de entorno la app corre en **modo demo**: guarda todo en el navega
 
 Si tu proyecto de Supabase ya tenía las tablas de una versión anterior, ejecutá una vez [`supabase/migracion-epicas.sql`](supabase/migracion-epicas.sql) (agrega épicas sin tocar las tarjetas). Para proyectos nuevos alcanza con `schema.sql`.
 
+Para que las tareas pertenezcan a una user story (sin valor ni esfuerzo propios) y los criterios de aceptación sean una checklist, ejecutá [`supabase/migracion-tareas-hijas.sql`](supabase/migracion-tareas-hijas.sql). El esfuerzo de cada columna y sprint suma solo user stories.
+
 ### Plan de la Release 1
 
 [`supabase/plan-release-1.sql`](supabase/plan-release-1.sql) crea los Sprints 1 a 4 con las fechas y objetivos del Mapa de Releases, tres épicas temáticas y asigna las historias US01–US14 a su épica y sprint. Se ejecuta una vez, después de `migracion-epicas.sql`.

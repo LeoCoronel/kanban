@@ -77,6 +77,7 @@ export function tareasSprint0(): Omit<NuevaHistoria, 'sprint_id'>[] {
     notas: '',
     estado: 'hecho',
     epica_id: null,
+    historia_padre_id: null,
     responsable: '',
     orden: i,
   }))
@@ -92,11 +93,12 @@ export function historiasIniciales(): NuevaHistoria[] {
     valor: f.valor,
     esfuerzo: f.esfuerzo,
     prioridad: f.prioridad as Prioridad,
-    criterios: f.criterios,
+    criterios: f.criterios.map((texto) => ({ texto, hecho: false })),
     notas: f.notas,
     estado: 'backlog',
     sprint_id: null,
     epica_id: null,
+    historia_padre_id: null,
     responsable: '',
     orden: 100 + f.orden,
   }))

@@ -64,6 +64,7 @@ export function TarjetasPorSprintModal({
       estado: 'por_hacer',
       sprint_id: c.sprint.id,
       epica_id: epica.id,
+      historia_padre_id: null,
       responsable: '',
       orden: base + i,
     }))

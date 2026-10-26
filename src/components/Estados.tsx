@@ -23,11 +23,24 @@ export function Vacio({ titulo, children }: { titulo: string; children?: ReactNo
   )
 }
 
-export function Aviso({ mensaje, onCerrar }: { mensaje: string; onCerrar: () => void }) {
+export function Aviso({
+  mensaje,
+  onCerrar,
+  tono = 'danger',
+}: {
+  mensaje: string
+  onCerrar: () => void
+  /** danger = error; warn = advertencia que no bloquea. */
+  tono?: 'danger' | 'warn'
+}) {
+  const colores =
+    tono === 'warn'
+      ? 'border-state-warn bg-state-warn-bg text-state-warn'
+      : 'border-state-danger bg-state-danger-bg text-state-danger'
   return (
     <div
-      role="alert"
-      className="flex items-start gap-3 rounded-lg border border-state-danger bg-state-danger-bg p-3 text-sm text-state-danger"
+      role={tono === 'warn' ? 'status' : 'alert'}
+      className={`flex items-start gap-3 rounded-lg border p-3 text-sm ${colores}`}
     >
       <AlertTriangle size={18} strokeWidth={1.5} className="mt-0.5 shrink-0" aria-hidden />
       <p className="flex-1">{mensaje}</p>

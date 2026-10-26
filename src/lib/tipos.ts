@@ -5,6 +5,12 @@ export type EstadoSprint = 'planificado' | 'activo' | 'cerrado'
 export type TipoTarjeta = 'historia' | 'tarea'
 export type TonoEpica = 'acento' | 'ok' | 'warn' | 'info' | 'neutro'
 
+/** Un criterio de aceptación de la user story, tildable. */
+export interface Criterio {
+  texto: string
+  hecho: boolean
+}
+
 export interface Historia {
   id: string
   codigo: string
@@ -12,14 +18,18 @@ export interface Historia {
   version: Version
   historia: string
   descripcion: string
+  /** Solo user stories: las tareas no llevan valor de negocio. */
   valor: number | null
+  /** Solo user stories: el esfuerzo se estima en la historia, no en sus tareas. */
   esfuerzo: number | null
   prioridad: Prioridad
-  criterios: string[]
+  criterios: Criterio[]
   notas: string
   estado: Estado
   sprint_id: string | null
   epica_id: string | null
+  /** Solo tareas: la user story a la que pertenecen. */
+  historia_padre_id: string | null
   responsable: string
   orden: number
   created_at: string

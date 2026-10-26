@@ -1,8 +1,9 @@
 import { PESO_PRIORIDAD } from './constantes'
-import type { Epica, Historia, Sprint, SprintHistoria } from './tipos'
+import type { Criterio, Epica, Historia, Sprint, SprintHistoria } from './tipos'
 
 /** Qué pasó con una tarjeta en un sprint. `sin_detalle`: sprint cerrado antes de existir la trazabilidad. */
-export type PasoSprint = 'hecha' | 'arrastrada' | 'devuelta' | 'en_curso' | 'planificada' | 'sin_detalle'
+export type PasoSprint =
+  'hecha' | 'arrastrada' | 'devuelta' | 'en_curso' | 'planificada' | 'sin_detalle'
 
 /** Paso de la tarjeta en el sprint, o null si no estuvo en él. */
 export function pasoEnSprint(h: Historia, s: Sprint, trazas: SprintHistoria[]): PasoSprint | null {
@@ -65,8 +66,56 @@ export function porPrioridadYOrden(a: Historia, b: Historia): number {
   return PESO_PRIORIDAD[a.prioridad] - PESO_PRIORIDAD[b.prioridad] || a.orden - b.orden
 }
 
+/** El esfuerzo se estima en la user story: las tareas no suman. */
 export function sumaEsfuerzo(hs: Historia[]): number {
-  return hs.reduce((acc, h) => acc + (h.esfuerzo ?? 0), 0)
+  return hs.filter((h) => h.tipo === 'historia').reduce((acc, h) => acc + (h.esfuerzo ?? 0), 0)
+}
+
+/** Tareas hijas de una user story. */
+export function tareasDe(us: Pick<Historia, 'id'>, historias: Historia[]): Historia[] {
+  return historias.filter((h) => h.historia_padre_id === us.id)
+}
+
+/** User story a la que pertenece una tarea (undefined si no tiene). */
+export function padreDe(h: Historia, historias: Historia[]): Historia | undefined {
+  return h.historia_padre_id ? historias.find((x) => x.id === h.historia_padre_id) : undefined
+}
+
+/** Próximo código libre de tarea: T34, T35... */
+export function siguienteCodigoTarea(historias: Historia[]): string {
+  const nums = historias
+    .map((h) => Number(h.codigo.match(/^T(\d+)$/i)?.[1]))
+    .filter((n) => Number.isFinite(n))
+  const n = (nums.length ? Math.max(...nums) : 0) + 1
+  return `T${String(n).padStart(2, '0')}`
+}
+
+/** Acepta el formato viejo (lista de textos) y el nuevo (checklist). */
+export function normalizarCriterios(c: unknown): Criterio[] {
+  if (!Array.isArray(c)) return []
+  return c.flatMap((x): Criterio[] => {
+    if (typeof x === 'string') return x.trim() ? [{ texto: x, hecho: false }] : []
+    if (x && typeof x === 'object' && typeof (x as Criterio).texto === 'string')
+      return [{ texto: (x as Criterio).texto, hecho: Boolean((x as Criterio).hecho) }]
+    return []
+  })
+}
+
+/** Lo que le falta a una user story para estar terminada (para avisar al pasarla a Hecho). */
+export function pendientesDe(us: Historia, historias: Historia[]) {
+  return {
+    tareas: tareasDe(us, historias).filter((t) => t.estado !== 'hecho').length,
+    criterios: us.criterios.filter((c) => !c.hecho).length,
+  }
+}
+
+export function textoPendientes(codigo: string, p: { tareas: number; criterios: number }) {
+  const partes = [
+    p.tareas && `${p.tareas} ${p.tareas === 1 ? 'tarea sin terminar' : 'tareas sin terminar'}`,
+    p.criterios &&
+      `${p.criterios} ${p.criterios === 1 ? 'criterio sin tildar' : 'criterios sin tildar'}`,
+  ].filter(Boolean)
+  return partes.length ? `${codigo} pasó a Hecho con ${partes.join(' y ')}.` : ''
 }
 
 export function fechaCorta(iso: string | null): string {
@@ -95,6 +144,8 @@ export const SIN_EPICA = '__sin_epica'
 
 export function filtrar(hs: Historia[], f: Filtros): Historia[] {
   const q = f.texto.trim().toLowerCase()
+  const codigoPadre = (h: Historia) =>
+    h.historia_padre_id ? (hs.find((x) => x.id === h.historia_padre_id)?.codigo ?? '') : ''
   return hs.filter((h) => {
     if (f.version && h.version !== f.version) return false
     if (f.prioridad && h.prioridad !== f.prioridad) return false
@@ -102,7 +153,10 @@ export function filtrar(hs: Historia[], f: Filtros): Historia[] {
     if (f.epica === SIN_EPICA ? h.epica_id !== null : f.epica && h.epica_id !== f.epica)
       return false
     if (!q) return true
-    return `${h.codigo} ${titulo(h)} ${h.historia} ${h.notas}`.toLowerCase().includes(q)
+    // Buscar "US01" también encuentra sus tareas.
+    return `${h.codigo} ${codigoPadre(h)} ${titulo(h)} ${h.historia} ${h.notas}`
+      .toLowerCase()
+      .includes(q)
   })
 }
 

@@ -1,6 +1,28 @@
 import { createClient } from '@supabase/supabase-js'
 import { epicaDocumentacion, historiasIniciales, sprint0, tareasSprint0 } from './semilla'
-import type { Epica, Historia, Repo, Sprint, SprintHistoria } from './tipos'
+import type { Epica, Historia, NuevaHistoria, Repo, Sprint, SprintHistoria } from './tipos'
+import { normalizarCriterios } from './util'
+
+/**
+ * Criterios: la checklist vive en `criterios_check` (jsonb). Mientras dure la transición,
+ * `criterios` (text[]) se mantiene con los textos para que la versión anterior de la app siga
+ * funcionando. Ver supabase/migracion-tareas-hijas.sql.
+ */
+type Fila = Omit<Historia, 'criterios'> & { criterios: unknown; criterios_check?: unknown }
+
+function deFila({ criterios_check, ...f }: Fila): Historia {
+  const check = normalizarCriterios(criterios_check)
+  return {
+    ...f,
+    historia_padre_id: f.historia_padre_id ?? null,
+    criterios: check.length ? check : normalizarCriterios(f.criterios),
+  }
+}
+
+function aFila(h: Partial<NuevaHistoria>): Record<string, unknown> {
+  if (!h.criterios) return h
+  return { ...h, criterios: h.criterios.map((c) => c.texto), criterios_check: h.criterios }
+}
 
 export function crearRepoSupabase(url: string, clave: string): Repo {
   const sb = createClient(url, clave)
@@ -27,7 +49,7 @@ export function crearRepoSupabase(url: string, clave: string): Repo {
         )
       }
       return {
-        historias: (h.data ?? []) as Historia[],
+        historias: ((h.data ?? []) as Fila[]).map(deFila),
         sprints: (s.data ?? []) as Sprint[],
         epicas: (e.data ?? []) as Epica[],
         // Si falta la migración de trazabilidad, el resto de la app sigue funcionando.
@@ -46,11 +68,11 @@ export function crearRepoSupabase(url: string, clave: string): Repo {
       }
     },
     async crearHistorias(hs) {
-      const { error } = await sb.from('historias').insert(hs)
+      const { error } = await sb.from('historias').insert(hs.map(aFila))
       fallar(error)
     },
     async actualizarHistorias(ids, patch) {
-      const { error } = await sb.from('historias').update(patch).in('id', ids)
+      const { error } = await sb.from('historias').update(aFila(patch)).in('id', ids)
       fallar(error)
     },
     async eliminarHistoria(id) {
@@ -85,7 +107,7 @@ export function crearRepoSupabase(url: string, clave: string): Repo {
         ...tareasSprint0().map((t) => ({ ...t, sprint_id: sprintId })),
         ...historiasIniciales(),
       ]
-      const { error: e2 } = await sb.from('historias').insert(filas)
+      const { error: e2 } = await sb.from('historias').insert(filas.map(aFila))
       fallar(e2)
       const doc = epicaDocumentacion()
       const { data: existe } = await sb
